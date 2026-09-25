@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import './material-theme.scss';
+@use 'tailwindcss';
+@use './material-theme.scss';
 
 html {
   scroll-behavior: smooth;
