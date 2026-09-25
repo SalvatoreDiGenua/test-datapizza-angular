@@ -8,7 +8,7 @@ export interface ApiErrorState {
 
 @Service()
 export class ApiError {
-  readonly error = signal<ApiErrorState | null>(null);
+  public readonly error = signal<ApiErrorState | null>(null);
 
   report(error: ApiErrorState): void {
     this.error.set(error);

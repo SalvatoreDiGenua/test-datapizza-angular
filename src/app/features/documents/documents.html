@@ -1,1 +1,45 @@
-<p>documents works!</p>
+<section class="documents gap-3">
+  <div class="documents__actions px-3 pt-3 flex justify-end">
+    <button
+      matIconButton
+      matTooltip="Carica un documento"
+      (click)="inputFile.click()"
+    >
+      <mat-icon>upload</mat-icon>
+    </button>
+  </div>
+  <div class="documents__table px-3">
+    @if (dataSource().length > 0) {
+      <table mat-table [dataSource]="dataSource()">
+        @for (column of displayedColumns; track column) {
+          <ng-container [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+            <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+          </ng-container>
+        }
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    } @else {
+      Nessun documento caricato Caricalo premendo
+      <strong
+        class="cursor-pointer"
+        (click)="inputFile.click()"
+        (keydown.enter)="inputFile.click()"
+        tabindex=""
+      >
+        qui
+      </strong>
+    }
+  </div>
+</section>
+
+<input
+  #inputFile
+  type="file"
+  accept=".pdf"
+  multiple
+  hidden
+  (change)="onFileSelected($event)"
+/>
