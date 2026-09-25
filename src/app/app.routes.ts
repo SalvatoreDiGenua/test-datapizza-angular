@@ -8,18 +8,29 @@ export const routes: Routes = [
     title: '🍕 Login Datapizza Angular',
   },
   {
-    path: 'chat',
-    loadComponent: () => import('./features/chat/chat').then((m) => m.Chat),
-    title: '🍕 Chat Datapizza Angular',
-    canActivate: [authGuard],
+    path: 'shell',
+    loadComponent: () => import('./features/shell/shell').then((m) => m.Shell),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'chat',
+      },
+      {
+        path: 'chat',
+        loadComponent: () => import('./features/chat/chat').then((m) => m.Chat),
+        title: '🍕 Chat Datapizza Angular',
+        canActivate: [authGuard],
+      },
+    ],
   },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'login',
+    redirectTo: 'shell',
   },
   {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'shell',
   },
 ];

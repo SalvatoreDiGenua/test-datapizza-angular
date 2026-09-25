@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,8 +26,9 @@ import { HttpErrorResponse } from '@angular/common/http';
   ],
 })
 export class Login {
-  private ngxRequestLock = viewChild(RequestLockDirective);
+  private readonly requestLock = viewChild(RequestLockDirective);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
@@ -53,14 +54,21 @@ export class Login {
     this.authService
       .loginApiAuthLoginPost({ user_id: userId }, 'body', false, {
         context: createRequestLockContext(
-          this.ngxRequestLock()?.requestId() as string,
+          this.requestLock()?.requestId() as string,
         ),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.auth.setUser({ id: userId, email: 'test@datapizza.it' });
-          this.router.navigate(['/chat']);
+          this.auth.setUser({
+            id: userId,
+            email: 'test@datapizza.it',
+          });
+
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          console.log({ returnUrl });
+
+          this.router.navigateByUrl(returnUrl || '/shell/chat');
         },
         error: (err: HttpErrorResponse) => {
           console.error('Errore durante il login:', err);
