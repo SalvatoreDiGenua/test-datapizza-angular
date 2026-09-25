@@ -1,0 +1,58 @@
+<div
+  class="bg-surface flex min-h-screen flex-col items-center justify-center p-4"
+>
+  <div
+    class="bg-background w-full max-w-md space-y-8 rounded-3xl border border-slate-200 p-8 shadow-xl dark:border-slate-800"
+  >
+    <div class="space-y-2 text-center">
+      <h1 class="text-primary text-3xl font-extrabold">Login</h1>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Inserisci il tuo User ID per accedere alla chat e ai documenti
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>User ID</mat-label>
+        <input
+          matInput
+          [formControl]="userIdControl"
+          placeholder="Es. salvatore123"
+          (keydown.enter)="login()"
+        />
+
+        @if (userIdControl.hasError('required')) {
+          <mat-error>
+            L'User ID è
+            <strong>obbligatorio</strong>
+          </mat-error>
+        }
+        @if (userIdControl.hasError('pattern')) {
+          <mat-error>
+            Sono ammessi solo caratteri
+            <strong>alfanumerici</strong>
+          </mat-error>
+        }
+        @if (userIdControl.hasError('maxlength')) {
+          <mat-error>
+            L'User ID è
+            <strong>troppo lungo</strong>
+            (max 30 caratteri)
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        #loginBtn
+        mat-flat-button
+        color="primary"
+        class="h-14 w-full rounded-xl text-lg"
+        ngxRequestLock
+        (click)="login()"
+        [disabled]="userIdControl.invalid"
+      >
+        Entra
+      </button>
+    </div>
+  </div>
+</div>

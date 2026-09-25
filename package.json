@@ -1,0 +1,51 @@
+{
+  "name": "angular-boilerplate",
+  "version": "22.1.0",
+  "author": "Salvatore Di Genua",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --open",
+    "start-local-machine": "ng serve --host 0.0.0.0 --port=5200 --open",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:watch": "ng test --watch",
+    "lint": "ng lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "npx rimraf .angular dist out-tsc",
+    "generate:api": "openapi-generator-cli generate -i http://localhost:8000/openapi.json -g typescript-angular -o src/app/api --additional-properties=supportsES6=true,stringEnums=true"
+  },
+  "dependencies": {
+    "@angular/cdk": "^22.2.0",
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/material": "^22.2.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "@jsverse/transloco": "^8.4.0",
+    "@jsverse/transloco-persist-lang": "^8.4.0",
+    "ngx-request-lock": "^1.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.2",
+    "@angular/cli": "^22.1.2",
+    "@angular/compiler-cli": "^22.1.0",
+    "@eslint/js": "^10.0.1",
+    "@openapitools/openapi-generator-cli": "^2.41.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "angular-eslint": "22.1.0",
+    "eslint": "^10.6.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4.1.12",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "8.62.1",
+    "vitest": "^4.0.8"
+  }
+}

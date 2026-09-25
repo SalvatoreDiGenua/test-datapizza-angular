@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "settings": {
+    "editor.tabSize": 2,
+    "workbench.tree.enableStickyScroll": false,
+  },
+  "extensions": {
+    "recommendations": [],
+  },
+}

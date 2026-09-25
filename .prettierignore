@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Angular build/cache
+.angular/
+dist/
+out-tsc/
+
+# Coverage / test output
+coverage/
+
+# Generated files
+*.generated.*
+*.gen.*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.vscode/
+.gemini/
+.cursor/
+.codex/
+.claude/
+.agents/
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+
+# Temporary files
+tmp/
+temp/
+
+# Logs
+*.log
+
+# Generated documentation / reports
+reports/

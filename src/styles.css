@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+@import './material-theme.scss';
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}

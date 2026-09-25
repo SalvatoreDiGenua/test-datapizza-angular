@@ -1,0 +1,44 @@
+@use '@angular/material' as mat;
+
+$theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$blue-palette,
+      tertiary: mat.$orange-palette,
+    ),
+    typography: (
+      brand-family: '"Inter", sans-serif',
+      plain-family: '"Inter", sans-serif',
+    ),
+    density: (
+      scale: -1,
+    ),
+  )
+);
+
+:root {
+  @include mat.all-component-themes($theme);
+
+  --sys-primary: #2563eb;
+  --sys-primary-light: #60a5fa;
+  --sys-primary-dark: #1d4ed8;
+
+  --sys-accent: #f97316;
+
+  --sys-surface: #f8fafc;
+  --sys-background: #ffffff;
+
+  --mdc-filled-button-container-color: var(--sys-primary);
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mdc-circular-progress-active-indicator-color: var(--sys-primary);
+  --mdc-text-button-label-text-color: var(--sys-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sys-surface: #1e293b;
+    --sys-background: #0f172a;
+    --mdc-filled-button-container-color: var(--sys-primary-light);
+  }
+}
