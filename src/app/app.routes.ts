@@ -22,6 +22,13 @@ export const routes: Routes = [
         title: '🍕 Chat Datapizza Angular',
         canActivate: [authGuard],
       },
+      {
+        path: 'documents',
+        loadComponent: () =>
+          import('./features/documents/documents').then((m) => m.Documents),
+        title: '🍕 Documents Datapizza Angular',
+        canActivate: [authGuard],
+      },
     ],
   },
   {

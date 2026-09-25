@@ -3,12 +3,14 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
 }
 
+html,
 body {
+  height: 100%;
+  width: 100%;
   margin: 0;
-  min-width: 320px;
-  line-height: 1.5;
-  text-rendering: optimizeLegibility;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }

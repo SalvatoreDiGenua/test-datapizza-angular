@@ -1,0 +1,23 @@
+<mat-action-list>
+  <a
+    mat-list-item
+    [routerLink]="['chat']"
+    [relativeTo]="route"
+    routerLinkActive="border-l-4 border-transparent border-l-[var(--sys-primary)]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    Nuova chat
+  </a>
+
+  <mat-divider />
+
+  <a
+    mat-list-item
+    [routerLink]="['documents']"
+    [relativeTo]="route"
+    routerLinkActive="border-l-4 border-transparent border-l-[var(--sys-primary)]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    Documenti
+  </a>
+</mat-action-list>

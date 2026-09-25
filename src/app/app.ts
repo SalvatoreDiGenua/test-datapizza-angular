@@ -10,8 +10,10 @@ import { RouterOutlet } from '@angular/router';
   `,
   styles: `
     :host {
-      display: block;
-      min-height: 100dvh;
+      flex: 1 1 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .skip-link {

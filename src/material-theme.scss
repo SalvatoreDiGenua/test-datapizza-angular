@@ -33,6 +33,8 @@ $theme: mat.define-theme(
   --mdc-filled-button-label-text-color: #ffffff;
   --mdc-circular-progress-active-indicator-color: var(--sys-primary);
   --mdc-text-button-label-text-color: var(--sys-primary);
+
+  --mat-sidenav-container-width: 260px;
 }
 
 @media (prefers-color-scheme: dark) {

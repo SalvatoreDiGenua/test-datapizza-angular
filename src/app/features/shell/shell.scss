@@ -1,0 +1,22 @@
+:host {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  &__drawer-container,
+  &__drawer-content {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+  ::ng-deep &__main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+}

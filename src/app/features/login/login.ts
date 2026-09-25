@@ -66,8 +66,6 @@ export class Login {
           });
 
           const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-          console.log({ returnUrl });
-
           this.router.navigateByUrl(returnUrl || '/shell/chat');
         },
         error: (err: HttpErrorResponse) => {

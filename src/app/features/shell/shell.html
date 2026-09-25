@@ -1,2 +1,18 @@
-<p>shell works!</p>
-<router-outlet />
+<section class="shell">
+  <mat-drawer-container class="shell__drawer-container" autosize>
+    <mat-drawer
+      [mode]="shellService.drawerMode()"
+      [opened]="shellService.isDrawerOpen()"
+    >
+      <app-menu class="shell__menu" />
+    </mat-drawer>
+    <mat-drawer-content class="shell__drawer-content">
+      <div class="shell__main">
+        <app-toolbar class="shell__toolbar" />
+        <mat-card class="mx-6 mb-6 h-full" appearance="outlined">
+          <router-outlet />
+        </mat-card>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</section>

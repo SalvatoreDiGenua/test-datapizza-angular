@@ -1,8 +1,8 @@
 <div
-  class="bg-surface flex min-h-screen flex-col items-center justify-center p-4"
+  class="bg-surface p-4 flex min-h-screen flex-col items-center justify-center"
 >
   <div
-    class="bg-background w-full max-w-md space-y-8 rounded-3xl border border-slate-200 p-8 shadow-xl dark:border-slate-800"
+    class="bg-background max-w-md space-y-8 rounded-3xl border-slate-200 p-8 shadow-xl dark:border-slate-800 w-full border"
   >
     <div class="space-y-2 text-center">
       <h1 class="text-primary text-3xl font-extrabold">Login</h1>
@@ -11,7 +11,7 @@
       </p>
     </div>
 
-    <div class="flex flex-col gap-2">
+    <div class="gap-2 flex flex-col">
       <mat-form-field appearance="outline" class="w-full">
         <mat-label>User ID</mat-label>
         <input
@@ -46,7 +46,7 @@
         #loginBtn
         mat-flat-button
         color="primary"
-        class="h-14 w-full rounded-xl text-lg"
+        class="h-14 rounded-xl text-lg w-full"
         ngxRequestLock
         (click)="login()"
         [disabled]="userIdControl.invalid"
