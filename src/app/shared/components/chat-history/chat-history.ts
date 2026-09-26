@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -14,5 +14,6 @@ import { ChatHistoryStore } from '../../services/chat-history-store';
   imports: [RouterLink, DatePipe, MatIconModule, MatProgressSpinnerModule],
 })
 export class ChatHistory {
+  readonly route = inject(ActivatedRoute);
   readonly store = inject(ChatHistoryStore);
 }

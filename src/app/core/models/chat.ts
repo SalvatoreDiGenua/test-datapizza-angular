@@ -17,7 +17,7 @@ export interface ChatApiConversation {
   created_at: string;
   query: string;
   response: string;
-  citations: ChatCitation[];
+  citations?: ChatCitation[];
 }
 
 export interface ChatApiResponse {
@@ -26,7 +26,7 @@ export interface ChatApiResponse {
   created_at: string;
   query: string;
   response: string;
-  citations: ChatCitation[];
+  citations?: ChatCitation[];
 }
 
 export interface ChatMessage {

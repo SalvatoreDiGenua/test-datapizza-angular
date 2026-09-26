@@ -95,6 +95,7 @@
         @for (chat of store.items(); track chat.id) {
           <a
             [routerLink]="['/chat']"
+            [relativeTo]="route"
             [queryParams]="{
               chat_id: chat.id,
             }"

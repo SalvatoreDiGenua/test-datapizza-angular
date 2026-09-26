@@ -60,8 +60,6 @@ export class Chat {
 
   readonly serverConversation = computed<ChatConversation | null>(() => {
     const value = this.chatResource.value();
-    console.log(value);
-    
 
     if (!value) {
       return null;
@@ -289,7 +287,7 @@ export class Chat {
         content: conversation.response,
         time: conversation.created_at,
         status: 'complete',
-        citations: conversation.citations,
+        citations: conversation.citations ?? [],
       });
     }
 
@@ -326,7 +324,8 @@ export class Chat {
       typeof conversation['created_at'] === 'string' &&
       typeof conversation['query'] === 'string' &&
       typeof conversation['response'] === 'string' &&
-      Array.isArray(conversation['citations'])
+      (conversation['citations'] === undefined ||
+        Array.isArray(conversation['citations']))
     );
   }
 }
