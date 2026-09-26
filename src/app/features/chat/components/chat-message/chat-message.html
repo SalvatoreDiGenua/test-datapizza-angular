@@ -30,9 +30,16 @@
       [class.chat__bubble--assistant]="isAssistant()"
     >
       @if (message().content) {
-        <p class="m-0 break-words whitespace-pre-wrap">
-          {{ message().content }}
-        </p>
+        @if (isAssistant()) {
+          <markdown
+            class="chat__markdown break-words"
+            [data]="message().content"
+          ></markdown>
+        } @else {
+          <p class="m-0 break-words whitespace-pre-wrap">
+            {{ message().content }}
+          </p>
+        }
       }
 
       @if (message().status === 'streaming') {
