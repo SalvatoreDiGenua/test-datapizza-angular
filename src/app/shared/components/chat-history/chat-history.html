@@ -1,4 +1,4 @@
-<section class="flex flex-col grow">
+<section class="flex grow flex-col">
   <!-- Header -->
   <div class="mb-2 px-3 flex items-center justify-between">
     <div class="gap-2 flex items-center">
@@ -90,15 +90,18 @@
       <!-- Conversation list -->
       <nav
         aria-label="Cronologia conversazioni"
-        class="min-h-0 gap-0.5 px-1 flex-[1_1_10px] flex flex-col overflow-auto"
+        class="min-h-0 gap-0.5 px-1 flex flex-[1_1_10px] flex-col overflow-auto"
       >
         @for (chat of store.items(); track chat.id) {
           <a
-            [routerLink]="['/chat']"
+            [routerLink]="['chat']"
             [relativeTo]="route"
             [queryParams]="{
               chat_id: chat.id,
             }"
+            routerLinkActive="bg-emerald-100 dark:bg-emerald-500/20"
+            [routerLinkActiveOptions]="{ exact: true }"
+            ariaCurrentWhenActive="page"
             class="group min-w-0 rounded-xl px-3 py-2.5 hover:bg-gray-100 focus-visible:ring-emerald-500 dark:hover:bg-white/[0.045] relative flex flex-col transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
           >
             <!-- Active indicator -->

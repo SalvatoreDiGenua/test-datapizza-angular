@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { DatePipe } from '@angular/common';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +11,13 @@ import { ChatHistoryStore } from '../../services/chat-history-store';
   templateUrl: './chat-history.html',
   styleUrl: './chat-history.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, DatePipe, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    RouterLink,
+    DatePipe,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    RouterLinkActive,
+  ],
 })
 export class ChatHistory {
   readonly route = inject(ActivatedRoute);
