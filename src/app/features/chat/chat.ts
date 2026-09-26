@@ -43,4 +43,8 @@ export class Chat {
 
     void this.session.send(content, this.chat_id(), history);
   }
+
+  cancelMessage(): void {
+    this.session.cancel();
+  }
 }
