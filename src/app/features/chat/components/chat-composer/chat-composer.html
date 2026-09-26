@@ -23,7 +23,7 @@
     class="chat__send"
     [disabled]="disabled() ? false : !canSend()"
     [attr.aria-label]="disabled() ? 'Annulla invio' : 'Invia messaggio'"
-    (click)="disabled() ? cancel() : submit()"
+    (click)="disabled() ? cancel() : null"
   >
     @if (disabled()) {
       <mat-icon>stop</mat-icon>
