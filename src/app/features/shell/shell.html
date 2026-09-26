@@ -5,8 +5,10 @@
       [opened]="shellService.isDrawerOpen()"
     >
       <div class="flex h-full flex-col">
-        <app-menu class="shell__menu grow" />
-        <app-chat-history class="shell__chat-history grow" />
+        <app-menu class="shell__menu shrink grow" />
+        <app-chat-history
+          class="shell__chat-history max-h-[80%] shrink grow basis-auto"
+        />
       </div>
     </mat-drawer>
     <mat-drawer-content class="shell__drawer-content">

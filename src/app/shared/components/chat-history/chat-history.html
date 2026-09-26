@@ -1,4 +1,4 @@
-<section class="min-h-0 flex flex-col">
+<section class="flex flex-col grow">
   <!-- Header -->
   <div class="mb-2 px-3 flex items-center justify-between">
     <div class="gap-2 flex items-center">
@@ -90,7 +90,7 @@
       <!-- Conversation list -->
       <nav
         aria-label="Cronologia conversazioni"
-        class="min-h-0 gap-0.5 px-1 flex flex-col overflow-y-auto"
+        class="min-h-0 gap-0.5 px-1 flex-[1_1_10px] flex flex-col overflow-auto"
       >
         @for (chat of store.items(); track chat.id) {
           <a
