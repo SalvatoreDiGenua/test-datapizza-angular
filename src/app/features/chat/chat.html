@@ -2,52 +2,8 @@
   class="chat min-h-0 bg-background flex h-full flex-col overflow-hidden"
   aria-label="Assistente chat"
 >
-  <!-- Header -->
-  <header
-    class="border-slate-200/70 px-5 py-4 dark:border-slate-700/70 flex shrink-0 items-center justify-between border-b"
-  >
-    <div class="min-w-0 gap-3 flex items-center">
-      <div
-        class="h-10 w-10 rounded-xl bg-primary text-white shadow-sm flex shrink-0 items-center justify-center"
-        aria-hidden="true"
-      >
-        <mat-icon fontIcon="auto_awesome"></mat-icon>
-      </div>
+  <app-chat-header [sending]="sending()" />
 
-      <div class="min-w-0">
-        <h1
-          class="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate"
-        >
-          Assistente
-        </h1>
-
-        <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-          {{
-            sending()
-              ? 'Sta elaborando una risposta...'
-              : 'Online e pronto ad aiutarti'
-          }}
-        </p>
-      </div>
-    </div>
-
-    @if (sending()) {
-      <div
-        class="gap-2 text-xs font-medium text-primary flex items-center"
-        aria-live="polite"
-      >
-        <mat-progress-spinner
-          mode="indeterminate"
-          diameter="16"
-          strokeWidth="2"
-        ></mat-progress-spinner>
-
-        <span class="sm:inline hidden">Elaborazione</span>
-      </div>
-    }
-  </header>
-
-  <!-- Messages area -->
   <div
     class="chat__body flex-1 overflow-y-auto"
     aria-live="polite"
@@ -56,32 +12,23 @@
     <div
       class="max-w-4xl px-4 py-6 sm:px-6 mx-auto flex min-h-full w-full flex-col"
     >
-      <!-- Loading -->
       @if (loading()) {
         <div class="flex flex-1 items-center justify-center">
           <div
             class="gap-4 rounded-2xl border-slate-200 bg-surface px-8 py-7 shadow-sm dark:border-slate-700 flex flex-col items-center border"
           >
-            <mat-progress-spinner
-              mode="indeterminate"
-              diameter="36"
-            ></mat-progress-spinner>
-
+            <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
             <div class="text-center">
               <p class="text-sm font-medium text-slate-700 dark:text-slate-200">
                 Caricamento conversazione
               </p>
-
               <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Attendi qualche istante...
               </p>
             </div>
           </div>
         </div>
-      }
-
-      <!-- Error -->
-      @if (loadError(); as error) {
+      } @else if (loadError(); as error) {
         <div class="flex flex-1 items-center justify-center">
           <div
             class="max-w-md rounded-2xl border-red-200 bg-red-50 px-6 py-6 dark:border-red-900/60 dark:bg-red-950/30 flex flex-col items-center border text-center"
@@ -93,20 +40,15 @@
             >
               <mat-icon fontIcon="error_outline"></mat-icon>
             </div>
-
             <h2 class="text-sm font-semibold text-red-900 dark:text-red-200">
               Impossibile caricare la conversazione
             </h2>
-
             <p class="mt-2 text-sm leading-6 text-red-700 dark:text-red-300">
               {{ error }}
             </p>
           </div>
         </div>
-      }
-
-      <!-- Welcome -->
-      @if (!showMessages() && !loading() && !loadError()) {
+      } @else if (messages().length === 0) {
         <div class="flex flex-1 items-center justify-center">
           <div class="max-w-lg mx-auto text-center">
             <div
@@ -118,13 +60,11 @@
                 fontIcon="auto_awesome"
               ></mat-icon>
             </div>
-
             <h2
               class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl"
             >
               Come posso aiutarti?
             </h2>
-
             <p
               class="mt-3 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base mx-auto"
             >
@@ -134,139 +74,18 @@
             </p>
           </div>
         </div>
-      }
-
-      <!-- Messages -->
-      @if (showMessages()) {
-        <div class="gap-6 flex flex-col">
-          @for (message of messages(); track message.id) {
-            <article
-              class="chat__message gap-3 flex w-full"
-              [class.chat__message--user]="message.role === 'user'"
-              [class.chat__message--assistant]="message.role === 'assistant'"
-            >
-              <!-- Assistant avatar -->
-              @if (message.role === 'assistant') {
-                <div
-                  class="mt-1 h-9 w-9 rounded-xl bg-primary/10 text-primary flex shrink-0 items-center justify-center"
-                  aria-hidden="true"
-                >
-                  <mat-icon fontIcon="auto_awesome"></mat-icon>
-                </div>
-              }
-
-              <div
-                class="chat__message-content min-w-0 sm:max-w-[75%] max-w-[85%]"
-              >
-                <!-- Metadata -->
-                <div
-                  class="mb-1.5 gap-2 font-medium text-slate-400 dark:text-slate-500 flex items-center text-[11px]"
-                  [class.justify-end]="message.role === 'user'"
-                >
-                  <span>
-                    {{ message.role === 'user' ? 'Tu' : 'Assistente' }}
-                  </span>
-
-                  <span aria-hidden="true">·</span>
-
-                  <time [attr.datetime]="message.time">
-                    {{ message.time | date: 'HH:mm' }}
-                  </time>
-                </div>
-
-                <!-- Message bubble -->
-                <div
-                  class="chat__bubble rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm sm:text-[15px]"
-                  [class.chat__bubble--user]="message.role === 'user'"
-                  [class.chat__bubble--assistant]="message.role === 'assistant'"
-                >
-                  @if (message.content) {
-                    <p class="m-0 break-words whitespace-pre-wrap">
-                      {{ message.content }}
-                    </p>
-                  }
-
-                  <!-- Streaming -->
-                  @if (message.status === 'streaming') {
-                    <div
-                      class="chat__typing gap-1 flex items-center"
-                      aria-label="L'assistente sta scrivendo"
-                    >
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  }
-
-                  <!-- Error -->
-                  @if (message.status === 'error') {
-                    <div
-                      class="mt-2 gap-1.5 text-xs font-medium text-red-600 dark:text-red-400 flex items-center"
-                    >
-                      <mat-icon
-                        class="!h-4 !w-4 !text-[16px]"
-                        fontIcon="error_outline"
-                        aria-hidden="true"
-                      ></mat-icon>
-
-                      <span>Errore nella risposta</span>
-                    </div>
-                  }
-                </div>
-              </div>
-            </article>
-          }
-        </div>
+      } @else {
+        <app-chat-message-list [messages]="messages()" />
       }
     </div>
   </div>
 
-  <!-- Composer -->
   <div
     class="border-slate-200/70 bg-background px-4 py-3 sm:px-6 sm:py-4 dark:border-slate-700/70 shrink-0 border-t"
   >
-    <form
-      class="max-w-4xl gap-2 mx-auto flex w-full"
-      (submit)="sendMessage($event)"
-    >
-      <mat-form-field class="chat__field flex-1" appearance="outline">
-        <mat-label>Messaggio</mat-label>
-
-        <textarea
-          matInput
-          rows="1"
-          [value]="draft()"
-          [disabled]="sending()"
-          placeholder="Scrivi un messaggio..."
-          aria-label="Messaggio"
-          (input)="updateDraft($event)"
-          (keydown)="handleKeydown($event)"
-        ></textarea>
-
-        <mat-hint class="sm:block hidden">
-          Invio per inviare · Shift + Invio per andare a capo
-        </mat-hint>
-      </mat-form-field>
-
-      <button
-        mat-fab
-        extended
-        color="primary"
-        type="submit"
-        class="chat__send !h-14 mb-[4px]"
-        [disabled]="!canSend()"
-        [attr.aria-label]="sending() ? 'Invio in corso' : 'Invia messaggio'"
-      >
-        @if (sending()) {
-          <mat-progress-spinner
-            mode="indeterminate"
-            diameter="20"
-            strokeWidth="2"
-          ></mat-progress-spinner>
-        } @else {
-          <mat-icon>send</mat-icon>
-        }
-      </button>
-    </form>
+    <app-chat-composer
+      [disabled]="sending()"
+      (sendMessage)="sendMessage($event)"
+    />
   </div>
 </section>
