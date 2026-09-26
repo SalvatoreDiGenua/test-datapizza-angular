@@ -3,9 +3,9 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterOutlet } from '@angular/router';
 import { Toolbar } from '../../shared/components/toolbar/toolbar';
 import { ShellService } from '../../core/services/shell/shell';
-import { Menu } from '../../shared/components/menu/menu/menu';
+import { Menu } from '../../shared/components/menu/menu';
 import { MatCardModule } from '@angular/material/card';
-import { ChatHistory } from '../../shared/components/chat-history/chat-history/chat-history';
+import { ChatHistory } from '../../shared/components/chat-history/chat-history';
 
 @Component({
   selector: 'app-shell',
