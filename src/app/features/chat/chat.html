@@ -86,6 +86,7 @@
     <app-chat-composer
       [disabled]="sending()"
       (sendMessage)="sendMessage($event)"
+      (cancelMessage)="cancelMessage()"
     />
   </div>
 </section>
