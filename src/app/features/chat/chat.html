@@ -1,5 +1,5 @@
 <section
-  class="chat min-h-0 bg-background flex h-full flex-col overflow-hidden"
+  class="chat min-h-0 flex h-full flex-col overflow-hidden bg-background"
   aria-label="Assistente chat"
 >
   <app-chat-header [sending]="sending()" />
@@ -15,7 +15,7 @@
       @if (loading()) {
         <div class="flex flex-1 items-center justify-center">
           <div
-            class="gap-4 rounded-2xl border-slate-200 bg-surface px-8 py-7 shadow-sm dark:border-slate-700 flex flex-col items-center border"
+            class="gap-4 rounded-2xl border-slate-200 px-8 py-7 shadow-sm dark:border-slate-700 flex flex-col items-center border bg-surface"
           >
             <mat-progress-spinner
               mode="indeterminate"
@@ -55,13 +55,10 @@
         <div class="flex flex-1 items-center justify-center">
           <div class="max-w-lg mx-auto text-center">
             <div
-              class="mb-6 h-16 w-16 rounded-2xl bg-primary/10 text-primary mx-auto flex items-center justify-center"
+              class="mb-6 h-16 w-16 rounded-2xl mx-auto flex items-center justify-center bg-primary/10 text-primary"
               aria-hidden="true"
             >
-              <mat-icon
-                class="!h-8 !w-8 !text-[32px]"
-                fontIcon="auto_awesome"
-              ></mat-icon>
+              <mat-icon class="!h-8 !w-8 !text-[32px]">auto_awesome</mat-icon>
             </div>
             <h2
               class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl"
@@ -73,7 +70,7 @@
             >
               Scrivi una domanda per iniziare una nuova conversazione. Puoi
               chiedermi informazioni, aiutarti a risolvere un problema oppure
-              semplicemente fare due chiacchiere.
+              semplicemente fare due chiacchiere
             </p>
           </div>
         </div>
@@ -84,7 +81,7 @@
   </div>
 
   <div
-    class="border-slate-200/70 bg-background px-4 py-3 sm:px-6 sm:py-4 dark:border-slate-700/70 shrink-0 border-t"
+    class="border-slate-200/70 px-4 py-3 sm:px-6 sm:py-4 dark:border-slate-700/70 shrink-0 border-t bg-background"
   >
     <app-chat-composer
       [disabled]="sending()"
