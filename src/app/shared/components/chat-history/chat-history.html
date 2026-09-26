@@ -90,7 +90,7 @@
       <!-- Conversation list -->
       <nav
         aria-label="Cronologia conversazioni"
-        class="min-h-0 gap-0.5 px-1 flex flex-[1_1_10px] flex-col overflow-auto"
+        class="min-h-0 gap-0.5 px-1 pb-5 flex flex-[1_1_10px] flex-col overflow-auto"
       >
         @for (chat of store.items(); track chat.id) {
           <a
@@ -123,7 +123,6 @@
 
               <span
                 class="min-w-0 text-sm font-medium text-gray-700 group-hover:text-gray-900 dark:text-gray-200 dark:group-hover:text-white flex-1 truncate transition-colors"
-                [title]="chat.title"
               >
                 {{ chat.title }}
               </span>
@@ -139,7 +138,6 @@
             @if (chat.preview) {
               <p
                 class="ml-9 mt-1 text-xs leading-4 text-gray-500 dark:text-gray-500 line-clamp-2"
-                [title]="chat.preview"
               >
                 {{ chat.preview }}
               </p>
