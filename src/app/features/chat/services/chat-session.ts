@@ -1,4 +1,4 @@
-import { computed, inject, Signal, signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { ChatService } from '../../../api';
@@ -10,7 +10,7 @@ import {
 import { ChatStreamService } from '../../../core/services/chat/chat-stream';
 import { ChatHistoryStore } from '../../../shared/services/chat-history-store';
 
-export class ChatSession {
+@Injectable()\nexport class ChatSession {
   private readonly chatService = inject(ChatService);
   private readonly chatStreamService = inject(ChatStreamService);
   private readonly chatHistoryStore = inject(ChatHistoryStore);
