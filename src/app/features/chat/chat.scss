@@ -5,14 +5,17 @@
 }
 
 .chat {
-  color: var(--sys-on-background, #0f172a);
+  color: var(--sys-on-background);
+  background:
+    radial-gradient(circle at 50% -20%, color-mix(in srgb, var(--sys-primary) 8%, transparent), transparent 42%),
+    var(--sys-background);
 }
 
 .chat__body {
   flex: 1 1 10px;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgb(148 163 184 / 0.45) transparent;
+  scrollbar-color: var(--sys-outline-strong) transparent;
 }
 
 .chat__body::-webkit-scrollbar {
@@ -25,19 +28,9 @@
 
 .chat__body::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgb(148 163 184 / 0.45);
+  background: var(--sys-outline-strong);
 }
 
 .chat__body::-webkit-scrollbar-thumb:hover {
-  background: rgb(100 116 139 / 0.65);
-}
-
-@media (prefers-color-scheme: dark) {
-  .chat__body {
-    scrollbar-color: rgb(100 116 139 / 0.5) transparent;
-  }
-
-  .chat__body::-webkit-scrollbar-thumb {
-    background: rgb(100 116 139 / 0.5);
-  }
+  background: color-mix(in srgb, var(--sys-primary) 45%, var(--sys-outline-strong));
 }
