@@ -20,15 +20,6 @@ export interface ChatApiConversation {
   citations?: ChatCitation[];
 }
 
-export interface ChatApiResponse {
-  id: string;
-  user_id: string;
-  created_at: string;
-  query: string;
-  response: string;
-  citations?: ChatCitation[];
-}
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -36,11 +27,6 @@ export interface ChatMessage {
   time: string;
   status: 'complete' | 'streaming' | 'error';
   citations?: ChatCitation[];
-}
-
-export interface ChatConversation {
-  id: string;
-  messages: ChatMessage[];
 }
 
 export interface ChatHistoryItem {
