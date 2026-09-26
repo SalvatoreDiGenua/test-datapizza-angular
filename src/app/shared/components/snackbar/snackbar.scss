@@ -1,0 +1,75 @@
+.snackbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  min-width: 320px;
+  max-width: 520px;
+
+  padding: 0.875rem 1rem;
+
+  border: 1px solid;
+  border-radius: 0.75rem;
+
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &__content {
+    min-width: 0;
+  }
+
+  &__title {
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &__message {
+    margin-top: 0.125rem;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  &--success {
+    border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
+
+    .snackbar__icon {
+      color: var(--mat-sys-primary);
+    }
+  }
+
+  &--error {
+    border-color: color-mix(in srgb, var(--mat-sys-error) 45%, transparent);
+
+    .snackbar__icon {
+      color: var(--mat-sys-error);
+    }
+  }
+
+  &--warning {
+    border-color: color-mix(in srgb, #f59e0b 45%, transparent);
+
+    .snackbar__icon {
+      color: #f59e0b;
+    }
+  }
+
+  &--info {
+    border-color: color-mix(in srgb, #3b82f6 45%, transparent);
+
+    .snackbar__icon {
+      color: #3b82f6;
+    }
+  }
+}

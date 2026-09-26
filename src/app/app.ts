@@ -3,13 +3,11 @@ import {
   Component,
   effect,
   inject,
-  TemplateRef,
-  viewChild,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ApiError } from './core/services/api-error/api-error';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { SnackbarService } from './shared/services/snackbar';
 
 @Component({
   selector: 'app-root',
@@ -17,15 +15,6 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <a class="skip-link" href="#main-content"> Skip to main content </a>
     <router-outlet />
-    <ng-template #httpErrorSnackbar>
-      <div class="gap-3 max-w-sm flex items-center">
-        <mat-icon class="text-red-500! min-w-[24px]">error_outline</mat-icon>
-
-        <span class="text-sm">
-          {{ apiErrorService.error()?.message }}
-        </span>
-      </div>
-    </ng-template>
   `,
   styles: `
     :host {
@@ -58,9 +47,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class App {
   public readonly apiErrorService = inject(ApiError);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly httpErrorSnackbarTemplate =
-    viewChild<TemplateRef<HTMLDivElement>>('httpErrorSnackbar');
+  private readonly snackBarService = inject(SnackbarService);
 
   constructor() {
     effect(() => {
@@ -68,14 +55,7 @@ export class App {
       if (!error?.message) {
         return;
       }
-      this.snackBar.openFromTemplate(
-        this.httpErrorSnackbarTemplate() as TemplateRef<HTMLDivElement>,
-        {
-          duration: 2500,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-        },
-      );
+      this.snackBarService.error(error.message);
     });
   }
 }

@@ -1,0 +1,23 @@
+<div
+  class="snackbar"
+  [class.snackbar--success]="data.type === 'success'"
+  [class.snackbar--error]="data.type === 'error'"
+  [class.snackbar--warning]="data.type === 'warning'"
+  [class.snackbar--info]="data.type === 'info'"
+>
+  <div class="snackbar__icon">
+    <mat-icon>{{ icons[data.type] }}</mat-icon>
+  </div>
+
+  <div class="snackbar__content">
+    @if (data.title) {
+      <div class="snackbar__title">
+        {{ data.title }}
+      </div>
+    }
+
+    <div class="snackbar__message">
+      {{ data.message }}
+    </div>
+  </div>
+</div>
