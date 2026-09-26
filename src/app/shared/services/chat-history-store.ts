@@ -16,12 +16,19 @@ export class ChatHistoryStore {
 
   readonly items = computed<ChatHistoryItem[]>(() => {
     const value = this.resource.value();
-    return value.map((v: any) => ({
-      id: v.id,
-      title: v.query.trim() || 'Nuova conversazione',
-      preview: v.response.trim(),
-      createdAt: v.created_at,
-    }));
+
+    return value
+      .map((v: any) => ({
+        id: v.id,
+        title: v.query.trim() || 'Nuova conversazione',
+        preview: v.response.trim(),
+        createdAt: v.created_at,
+      }))
+      .sort(
+        (prev: any, next: any) =>
+          new Date(next.createdAt).getTime() -
+          new Date(prev.createdAt).getTime(),
+      );
   });
 
   readonly loading = computed(() => this.resource.isLoading());

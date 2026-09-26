@@ -1,4 +1,4 @@
-<form class="max-w-4xl gap-2 mx-auto flex w-full" (submit)="submit()">
+<form class="max-w-4xl gap-2 mx-auto flex w-full">
   <mat-form-field class="chat__field flex-1" appearance="outline">
     <textarea
       matInput
@@ -19,11 +19,11 @@
   <button
     mat-fab
     color="primary"
-    [type]="disabled() ? 'button' : 'submit'"
+    type="button"
     class="chat__send"
     [disabled]="disabled() ? false : !canSend()"
     [attr.aria-label]="disabled() ? 'Annulla invio' : 'Invia messaggio'"
-    (click)="disabled() ? cancel() : null"
+    (click)="disabled() ? cancel() : submit()"
   >
     @if (disabled()) {
       <mat-icon>stop</mat-icon>
