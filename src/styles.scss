@@ -3,6 +3,7 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--sys-background);
 }
 
 html,
@@ -13,4 +14,38 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
+  background: var(--sys-background);
+  color: var(--sys-on-background);
+  font-family: 'Inter', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100%;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--sys-primary) 22%, transparent);
+  color: var(--sys-on-background);
+}
+
+:focus-visible {
+  outline: 2px solid var(--sys-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
