@@ -1,36 +1,136 @@
-<section class="documents gap-3">
-  <div class="documents__actions px-3 pt-3 flex justify-end">
+<section class="documents">
+  <header class="documents__header">
+    <div>
+      <div class="gap-2 flex items-center">
+        <mat-icon class="text-[var(--mat-sys-primary)]">description</mat-icon>
+
+        <h1 class="text-xl font-semibold">Documenti</h1>
+      </div>
+
+      <p class="mt-1 text-sm opacity-70">
+        Gestisci i documenti PDF disponibili nel sistema.
+      </p>
+    </div>
+
     <button
-      matIconButton
-      matTooltip="Carica un documento"
+      mat-flat-button
+      type="button"
+      [disabled]="isUploading() || isLoading()"
       (click)="inputFile.click()"
     >
-      <mat-icon>upload</mat-icon>
-    </button>
-  </div>
-  <div class="documents__table px-3">
-    @if (dataSource().length > 0) {
-      <table mat-table [dataSource]="dataSource()">
-        @for (column of displayedColumns; track column) {
-          <ng-container [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
-            <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
-          </ng-container>
-        }
+      @if (isUploading()) {
+        <mat-spinner diameter="18" />
+        <span>Caricamento...</span>
+      } @else {
+        <mat-icon>upload_file</mat-icon>
+      }
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+      @if (!isUploading()) {
+        <span>Carica PDF</span>
+      }
+    </button>
+  </header>
+
+  @if (isUploading()) {
+    <mat-progress-bar mode="indeterminate" class="documents__upload-progress" />
+
+    <div class="documents__upload-status" role="status" aria-live="polite">
+      <mat-icon>cloud_upload</mat-icon>
+
+      <div>
+        <strong>Caricamento documenti</strong>
+        <span>Il server sta elaborando i file selezionati...</span>
+      </div>
+    </div>
+  }
+
+  <div class="documents__content">
+    @if (isLoading()) {
+      <div class="documents__loading" role="status" aria-live="polite">
+        <mat-spinner diameter="40" />
+
+        <div>
+          <strong>Caricamento documenti</strong>
+          <span>Recupero dei documenti disponibili...</span>
+        </div>
+      </div>
+    } @else if (dataSource().length > 0) {
+      <div class="documents__table-wrapper">
+        <table mat-table [dataSource]="dataSource()">
+          <ng-container matColumnDef="filename">
+            <th mat-header-cell *matHeaderCellDef>Documento</th>
+
+            <td mat-cell *matCellDef="let document">
+              <div class="gap-3 flex items-center">
+                <div class="documents__file-icon">
+                  <mat-icon>picture_as_pdf</mat-icon>
+                </div>
+
+                <div class="min-w-0">
+                  <div class="font-medium truncate" [title]="document.filename">
+                    {{ document.filename }}
+                  </div>
+
+                  <div class="text-xs opacity-60">PDF</div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="page_count">
+            <th mat-header-cell *matHeaderCellDef>Pagine</th>
+
+            <td mat-cell *matCellDef="let document">
+              <span class="documents__value">
+                {{ document.page_count }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Stato</th>
+
+            <td mat-cell *matCellDef="let document">
+              <span class="documents__status">
+                <span class="documents__status-dot"></span>
+                {{ document.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="upload_date">
+            <th mat-header-cell *matHeaderCellDef>Caricato il</th>
+
+            <td mat-cell *matCellDef="let document">
+              {{ document.upload_date | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
     } @else {
-      Nessun documento caricato Caricalo premendo
-      <strong
-        class="cursor-pointer"
-        (click)="inputFile.click()"
-        (keydown.enter)="inputFile.click()"
-        tabindex=""
-      >
-        qui
-      </strong>
+      <div class="documents__empty">
+        <div class="documents__empty-icon">
+          <mat-icon>folder_open</mat-icon>
+        </div>
+
+        <h2>Nessun documento</h2>
+
+        <p>Non hai ancora caricato alcun documento PDF.</p>
+
+        <button
+          mat-stroked-button
+          type="button"
+          [disabled]="isUploading()"
+          (click)="inputFile.click()"
+        >
+          <mat-icon>upload_file</mat-icon>
+          Carica il primo documento
+        </button>
+      </div>
     }
   </div>
 </section>
@@ -38,7 +138,7 @@
 <input
   #inputFile
   type="file"
-  accept=".pdf"
+  accept="application/pdf,.pdf"
   multiple
   hidden
   (change)="onFileSelected($event)"
