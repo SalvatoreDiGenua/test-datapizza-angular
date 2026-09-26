@@ -1,10 +1,8 @@
 <form class="max-w-4xl gap-2 mx-auto flex w-full" (submit)="submit()">
   <mat-form-field class="chat__field flex-1" appearance="outline">
-    <mat-label>Messaggio</mat-label>
-
     <textarea
       matInput
-      rows="1"
+      rows="3"
       [value]="draft()"
       [disabled]="disabled()"
       placeholder="Scrivi un messaggio..."
@@ -20,10 +18,9 @@
 
   <button
     mat-fab
-    extended
     color="primary"
     type="submit"
-    class="chat__send !h-14 mb-[4px]"
+    class="chat__send"
     [disabled]="!canSend()"
     [attr.aria-label]="disabled() ? 'Invio in corso' : 'Invia messaggio'"
   >
@@ -32,7 +29,7 @@
         mode="indeterminate"
         diameter="20"
         strokeWidth="2"
-      ></mat-progress-spinner>
+      />
     } @else {
       <mat-icon>send</mat-icon>
     }

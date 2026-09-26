@@ -1,5 +1,7 @@
 @use 'tailwindcss';
 @use './material-theme.scss';
+@config '../tailwind.config.js';
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   scroll-behavior: smooth;

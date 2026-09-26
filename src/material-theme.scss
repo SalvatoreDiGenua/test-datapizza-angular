@@ -5,7 +5,7 @@ $theme: mat.define-theme(
     color: (
       theme-type: light,
       primary: mat.$green-palette,
-      tertiary: mat.$lime-palette,
+      tertiary: mat.$orange-palette,
     ),
     typography: (
       brand-family: '"Inter", sans-serif',
@@ -32,42 +32,109 @@ $theme: mat.define-theme(
   --sys-primary-dark: #115e59;
   --sys-on-primary: #ffffff;
 
-  --sys-accent: #84cc16;
-  --sys-accent-dark: #65a30d;
-  --sys-on-accent: #1a2e05;
+  --sys-accent: #c2410c;
+  --sys-accent-light: #ea580c;
+  --sys-accent-dark: #9a3412;
+  --sys-on-accent: #ffffff;
 
-  --sys-background: #f4f7f6;
+  --sys-background: #f5f8f6;
   --sys-surface: #ffffff;
-  --sys-surface-muted: #e9f0ee;
+  --sys-surface-muted: #eaf1ee;
   --sys-surface-raised: #ffffff;
+  --sys-surface-highest: #dde8e3;
 
-  --sys-on-background: #17211f;
-  --sys-on-surface: #26332f;
-  --sys-on-surface-muted: #64736e;
+  --sys-on-background: #172520;
+  --sys-on-surface: #263730;
+  --sys-on-surface-muted: #5a6e66;
 
-  --sys-outline: #d4dfdb;
-  --sys-outline-strong: #b7c8c2;
+  --sys-outline: #d4dfd9;
+  --sys-outline-strong: #9fb4aa;
 
   --sys-success: #15803d;
   --sys-warning: #a16207;
   --sys-error: #b91c1c;
+  --sys-on-error: #ffffff;
 
   /* Angular Material semantic bridge */
   --mat-sys-primary: var(--sys-primary);
   --mat-sys-on-primary: var(--sys-on-primary);
   --mat-sys-primary-container: #ccfbf1;
   --mat-sys-on-primary-container: #134e4a;
+  --mat-sys-primary-fixed: var(--mat-sys-primary-container);
+  --mat-sys-on-primary-fixed: var(--mat-sys-on-primary-container);
+  --mat-sys-on-primary-fixed-variant: var(--mat-sys-on-primary-container);
+  --mat-sys-primary-fixed-dim: var(--mat-sys-primary);
+  --mat-sys-inverse-primary: var(--sys-primary-dark);
+  --mat-sys-secondary: var(--sys-accent);
+  --mat-sys-on-secondary: var(--sys-on-accent);
+  --mat-sys-secondary-container: #ffedd5;
+  --mat-sys-on-secondary-container: #7c2d12;
+  --mat-sys-secondary-fixed: var(--mat-sys-secondary-container);
+  --mat-sys-on-secondary-fixed: var(--mat-sys-on-secondary-container);
+  --mat-sys-on-secondary-fixed-variant: var(--mat-sys-on-secondary-container);
+  --mat-sys-secondary-fixed-dim: var(--mat-sys-secondary);
 
   --mat-sys-tertiary: var(--sys-accent);
   --mat-sys-on-tertiary: var(--sys-on-accent);
-  --mat-sys-tertiary-container: #ecfccb;
-  --mat-sys-on-tertiary-container: #365314;
+  --mat-sys-tertiary-container: #ffedd5;
+  --mat-sys-on-tertiary-container: #7c2d12;
+  --mat-sys-tertiary-fixed: var(--mat-sys-tertiary-container);
+  --mat-sys-on-tertiary-fixed: var(--mat-sys-on-tertiary-container);
+  --mat-sys-on-tertiary-fixed-variant: var(--mat-sys-on-tertiary-container);
+  --mat-sys-tertiary-fixed-dim: var(--mat-sys-tertiary);
 
+  --mat-sys-error: var(--sys-error);
+  --mat-sys-on-error: var(--sys-on-error);
+  --mat-sys-error-container: #fee2e2;
+  --mat-sys-on-error-container: #7f1d1d;
   --mat-sys-background: var(--sys-background);
   --mat-sys-on-background: var(--sys-on-background);
   --mat-sys-surface: var(--sys-surface);
   --mat-sys-on-surface: var(--sys-on-surface);
+  --mat-sys-surface-variant: var(--sys-surface-muted);
+  --mat-sys-on-surface-variant: var(--sys-on-surface-muted);
+  --mat-sys-surface-container-lowest: var(--sys-surface);
+  --mat-sys-surface-container-low: var(--sys-surface);
+  --mat-sys-surface-container: var(--sys-surface-muted);
+  --mat-sys-surface-container-high: var(--sys-surface-raised);
+  --mat-sys-surface-container-highest: var(--sys-surface-highest);
+  --mat-sys-surface-dim: var(--sys-background);
+  --mat-sys-surface-bright: var(--sys-surface-raised);
+  --mat-sys-surface-tint: var(--sys-primary);
+  --mat-sys-inverse-surface: var(--sys-on-surface);
+  --mat-sys-inverse-on-surface: var(--sys-surface);
   --mat-sys-outline: var(--sys-outline);
+  --mat-sys-outline-variant: var(--sys-outline);
+  --mat-sys-neutral-variant20: var(--sys-outline-strong);
+  --mat-sys-neutral10: var(--sys-on-surface);
+  --mat-sys-scrim: rgb(0 0 0 / 32%);
+
+  /* Material emits fixed light-palette colors for form-field-specific tokens. */
+  --mat-form-field-outlined-input-text-color: var(--sys-on-surface);
+  --mat-form-field-filled-input-text-color: var(--sys-on-surface);
+  --mat-form-field-outlined-input-text-placeholder-color: var(
+    --sys-on-surface-muted
+  );
+  --mat-form-field-filled-input-text-placeholder-color: var(
+    --sys-on-surface-muted
+  );
+  --mat-form-field-outlined-label-text-color: var(--sys-on-surface-muted);
+  --mat-form-field-filled-label-text-color: var(--sys-on-surface-muted);
+  --mat-form-field-outlined-hover-label-text-color: var(--sys-on-surface);
+  --mat-form-field-filled-hover-label-text-color: var(--sys-on-surface);
+  --mat-form-field-outlined-focus-label-text-color: var(--sys-primary);
+  --mat-form-field-filled-focus-label-text-color: var(--sys-primary);
+  --mat-form-field-outlined-outline-color: var(--sys-outline);
+  --mat-form-field-outlined-hover-outline-color: var(--sys-outline-strong);
+  --mat-form-field-outlined-focus-outline-color: var(--sys-primary);
+  --mat-form-field-filled-container-color: var(--sys-surface-muted);
+  --mat-form-field-filled-active-indicator-color: var(--sys-outline-strong);
+  --mat-form-field-filled-hover-active-indicator-color: var(--sys-primary);
+  --mat-form-field-filled-focus-active-indicator-color: var(--sys-primary);
+  --mat-form-field-outlined-caret-color: var(--sys-primary);
+  --mat-form-field-filled-caret-color: var(--sys-primary);
+  --mat-form-field-select-option-text-color: var(--sys-on-surface);
+  --mat-form-field-error-text-color: var(--sys-error);
 
   --mdc-filled-button-container-color: var(--sys-primary);
   --mdc-filled-button-label-text-color: var(--sys-on-primary);
@@ -77,56 +144,4 @@ $theme: mat.define-theme(
   --mat-sidenav-container-width: 280px;
 
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --sys-primary: #2dd4bf;
-    --sys-primary-light: #5eead4;
-    --sys-primary-dark: #14b8a6;
-    --sys-on-primary: #06201d;
-
-    --sys-accent: #a3e635;
-    --sys-accent-dark: #84cc16;
-    --sys-on-accent: #1a2e05;
-
-    --sys-background: #0b1210;
-    --sys-surface: #111b18;
-    --sys-surface-muted: #182520;
-    --sys-surface-raised: #16211e;
-
-    --sys-on-background: #e5efec;
-    --sys-on-surface: #d8e5e1;
-    --sys-on-surface-muted: #91a39d;
-
-    --sys-outline: #30423c;
-    --sys-outline-strong: #405750;
-
-    --sys-success: #4ade80;
-    --sys-warning: #facc15;
-    --sys-error: #f87171;
-
-    --mat-sys-primary: var(--sys-primary);
-    --mat-sys-on-primary: var(--sys-on-primary);
-    --mat-sys-primary-container: #134e4a;
-    --mat-sys-on-primary-container: #ccfbf1;
-
-    --mat-sys-tertiary: var(--sys-accent);
-    --mat-sys-on-tertiary: var(--sys-on-accent);
-    --mat-sys-tertiary-container: #365314;
-    --mat-sys-on-tertiary-container: #ecfccb;
-
-    --mat-sys-background: var(--sys-background);
-    --mat-sys-on-background: var(--sys-on-background);
-    --mat-sys-surface: var(--sys-surface);
-    --mat-sys-on-surface: var(--sys-on-surface);
-    --mat-sys-outline: var(--sys-outline);
-
-    --mdc-filled-button-container-color: var(--sys-primary);
-    --mdc-filled-button-label-text-color: var(--sys-on-primary);
-    --mdc-circular-progress-active-indicator-color: var(--sys-primary);
-    --mdc-text-button-label-text-color: var(--sys-primary);
-
-    color-scheme: dark;
-  }
 }

@@ -4,6 +4,14 @@
 
 .chat__message {
   animation: chat-message-in 180ms ease-out;
+  &--user {
+    display: flex;
+    justify-content: flex-end;
+  }
+  &--assistant {
+    display: flex;
+    justify-content: flex-start;
+  }
 }
 
 @keyframes chat-message-in {
@@ -34,7 +42,8 @@
   border-bottom-left-radius: 0.375rem;
   background: var(--sys-surface);
   color: var(--sys-on-surface);
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--sys-on-background) 5%, transparent);
+  box-shadow: 0 1px 2px
+    color-mix(in srgb, var(--sys-on-background) 5%, transparent);
 }
 
 .chat__typing {
