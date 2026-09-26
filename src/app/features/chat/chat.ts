@@ -5,7 +5,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ChatComposer } from './components/chat-composer/chat-composer';
 import { ChatHeader } from './components/chat-header/chat-header';
 import { ChatMessageList } from './components/chat-message-list/chat-message-list';
-import { ChatSession } from './services/chat-session';
+import { ChatSession } from '../../core/services/chat/chat-session';
 
 @Component({
   selector: 'app-chat',
@@ -34,10 +34,12 @@ export class Chat {
   readonly sending = this.session.sending;
 
   sendMessage(content: string): void {
-    const history = this.messages().map(({ role, content: messageContent }) => ({
-      role,
-      content: messageContent,
-    }));
+    const history = this.messages().map(
+      ({ role, content: messageContent }) => ({
+        role,
+        content: messageContent,
+      }),
+    );
 
     void this.session.send(content, this.chat_id(), history);
   }

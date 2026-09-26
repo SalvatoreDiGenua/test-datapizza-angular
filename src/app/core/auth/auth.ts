@@ -12,7 +12,7 @@ export class Auth {
   readonly accessToken = computed(() => this.sessionState().accessToken);
 
   readonly isAuthenticated = computed(() => this.user() !== null);
-  
+
   setSession(session: AuthSession): void {
     this.sessionState.set(session);
   }

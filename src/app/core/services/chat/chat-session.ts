@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, Signal, signal } from '@angular/core';
+import { computed, inject, Service, Signal, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { ChatService } from '../../../api';
@@ -6,11 +6,12 @@ import {
   ChatApiConversation,
   ChatCitation,
   ChatMessage,
-} from '../../../core/models/chat';
-import { ChatStreamService } from '../../../core/services/chat/chat-stream';
+} from '../../models/chat';
+import { ChatStreamService } from './chat-stream';
 import { ChatHistoryStore } from '../../../shared/services/chat-history-store';
 
-@Injectable()\nexport class ChatSession {
+@Service()
+export class ChatSession {
   private readonly chatService = inject(ChatService);
   private readonly chatStreamService = inject(ChatStreamService);
   private readonly chatHistoryStore = inject(ChatHistoryStore);
@@ -138,15 +139,10 @@ import { ChatHistoryStore } from '../../../shared/services/chat-history-store';
     }
   }
 
-  private updateMessage(
-    messageId: string,
-    patch: Partial<ChatMessage>,
-  ): void {
+  private updateMessage(messageId: string, patch: Partial<ChatMessage>): void {
     this.pendingMessages.update((messages) =>
       messages.map((message) =>
-        message.id === messageId
-          ? { ...message, ...patch }
-          : message,
+        message.id === messageId ? { ...message, ...patch } : message,
       ),
     );
   }

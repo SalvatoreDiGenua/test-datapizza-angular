@@ -31,7 +31,7 @@ import { DatePipe } from '@angular/common';
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    DatePipe
+    DatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
