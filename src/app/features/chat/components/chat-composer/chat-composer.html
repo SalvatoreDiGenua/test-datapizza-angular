@@ -19,17 +19,14 @@
   <button
     mat-fab
     color="primary"
-    type="submit"
+    [type]="disabled() ? 'button' : 'submit'"
     class="chat__send"
-    [disabled]="!canSend()"
-    [attr.aria-label]="disabled() ? 'Invio in corso' : 'Invia messaggio'"
+    [disabled]="disabled() ? false : !canSend()"
+    [attr.aria-label]="disabled() ? 'Annulla invio' : 'Invia messaggio'"
+    (click)="disabled() ? cancel() : submit()"
   >
     @if (disabled()) {
-      <mat-progress-spinner
-        mode="indeterminate"
-        diameter="20"
-        strokeWidth="2"
-      />
+      <mat-icon>stop</mat-icon>
     } @else {
       <mat-icon>send</mat-icon>
     }
