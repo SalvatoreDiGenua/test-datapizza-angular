@@ -3,7 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-chat-composer',
@@ -14,12 +13,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
   ],
 })
 export class ChatComposer {
   readonly disabled = input(false);
   readonly sendMessage = output<string>();
+  readonly cancelMessage = output<void>();
 
   readonly draft = signal('');
 
@@ -50,5 +49,13 @@ export class ChatComposer {
 
     this.sendMessage.emit(content);
     this.draft.set('');
+  }
+
+  cancel(): void {
+    if (!this.disabled()) {
+      return;
+    }
+
+    this.cancelMessage.emit();
   }
 }
