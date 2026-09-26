@@ -1,30 +1,41 @@
-import { ChatRequest } from '../../api';
-
-export interface ChatContentEvent {
-  type: 'content';
-  delta: string;
+export interface ChatBoundingRegion {
+  page_number: number;
+  rects_in: number[][];
 }
 
-export type ChatStreamEvent = ChatContentEvent;
-
-export interface ChatStreamRequest extends ChatRequest {
-  /**
-   * Permette al componente di interrompere la richiesta,
-   * ad esempio quando l'utente cambia pagina o chiude la chat.
-   */
-  signal: AbortSignal;
+export interface ChatCitation {
+  document_id: string;
+  filename: string;
+  page_number: number;
+  text_quote: string;
+  bounding_regions: ChatBoundingRegion[];
 }
 
-export type ChatRole = 'user' | 'assistant';
+export interface ChatApiConversation {
+  id: string;
+  user_id: string;
+  created_at: string;
+  query: string;
+  response: string;
+  citations: ChatCitation[];
+}
 
-export type ChatMessageStatus = 'complete' | 'streaming' | 'error';
+export interface ChatApiResponse {
+  id: string;
+  user_id: string;
+  created_at: string;
+  query: string;
+  response: string;
+  citations: ChatCitation[];
+}
 
 export interface ChatMessage {
   id: string;
-  role: ChatRole;
+  role: 'user' | 'assistant';
   content: string;
   time: string;
-  status: ChatMessageStatus;
+  status: 'complete' | 'streaming' | 'error';
+  citations?: ChatCitation[];
 }
 
 export interface ChatConversation {
@@ -32,14 +43,32 @@ export interface ChatConversation {
   messages: ChatMessage[];
 }
 
-export interface ChatApiMessage {
-  id?: unknown;
-  role?: unknown;
-  content?: unknown;
-  time?: unknown;
+export interface ChatHistoryItem {
+  id: string;
+  title: string;
+  preview: string;
+  createdAt: string;
 }
 
-export interface ChatApiResponse {
-  id?: unknown;
-  messages?: unknown;
+export interface ChatStreamRequest {
+  query: string;
+  history: {
+    role: 'user' | 'assistant';
+    content: string;
+  }[];
+  signal?: AbortSignal;
 }
+
+export type ChatStreamEvent =
+  | {
+      type: 'content';
+      delta: string;
+    }
+  | {
+      type: 'citations';
+      references: ChatCitation[];
+    }
+  | {
+      type: 'error';
+      message: string;
+    };

@@ -1,32 +1,164 @@
-<section class="chat-history" aria-label="Cronologia chat">
-  <h2 class="chat-history__title">Conversazioni</h2>
+<section class="min-h-0 flex flex-col">
+  <!-- Header -->
+  <div class="mb-2 px-3 flex items-center justify-between">
+    <div class="gap-2 flex items-center">
+      <mat-icon class="!h-4 !w-4 text-gray-400 dark:text-gray-500 !text-[18px]">
+        history
+      </mat-icon>
 
-  <mat-action-list aria-label="Le tue conversazioni">
-    @if (loading()) {
-      <div class="chat-history__message" role="status">Caricamento chat...</div>
-    } @else if (loadError()) {
-      <div class="chat-history__message" role="status">
-        Impossibile caricare le conversazioni
+      <h2
+        class="text-xs font-semibold tracking-wider text-gray-500 dark:text-gray-400 uppercase"
+      >
+        Conversazioni
+      </h2>
+    </div>
+
+    @if (!store.loading() && !store.error() && store.items().length > 0) {
+      <span
+        class="bg-gray-100 px-2 py-0.5 font-medium text-gray-500 dark:bg-white/5 dark:text-gray-500 rounded-full text-[10px]"
+      >
+        {{ store.items().length }}
+      </span>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (store.loading()) {
+    <div class="gap-2 px-4 py-8 flex flex-col items-center justify-center">
+      <mat-spinner diameter="20"></mat-spinner>
+
+      <span class="text-xs text-gray-400 dark:text-gray-600">
+        Caricamento conversazioni...
+      </span>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (store.error()) {
+    <div class="px-2">
+      <div
+        class="gap-2 rounded-lg border-red-200/70 bg-red-50 px-3 py-2.5 dark:border-red-900/40 dark:bg-red-950/20 flex items-start border"
+        role="alert"
+      >
+        <mat-icon class="!mt-0.5 !h-4 !w-4 text-red-500 !text-[18px]">
+          error_outline
+        </mat-icon>
+
+        <div class="min-w-0">
+          <p class="text-xs font-medium text-red-700 dark:text-red-400">
+            Impossibile caricare la cronologia.
+          </p>
+
+          <p
+            class="mt-0.5 leading-4 text-red-600/80 dark:text-red-400/70 text-[11px]"
+          >
+            Riprova più tardi.
+          </p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!store.loading() && !store.error()) {
+    @if (store.items().length === 0) {
+      <!-- Empty state -->
+      <div
+        class="px-4 py-10 flex flex-col items-center justify-center text-center"
+      >
+        <div
+          class="mb-3 h-10 w-10 rounded-xl bg-gray-100 dark:bg-white/5 flex items-center justify-center"
+        >
+          <mat-icon
+            class="!h-5 !w-5 text-gray-400 dark:text-gray-600 !text-[20px]"
+          >
+            chat_bubble_outline
+          </mat-icon>
+        </div>
+
+        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">
+          Nessuna conversazione
+        </p>
+
+        <p
+          class="mt-1 text-xs leading-4 text-gray-400 dark:text-gray-600 max-w-[220px]"
+        >
+          Le tue conversazioni appariranno qui.
+        </p>
       </div>
     } @else {
-      @for (chat of chats(); track chat.id) {
-        <a
-          mat-list-item
-          [routerLink]="['chat']"
-          [queryParams]="{ chat_id: chat.id }"
-          [relativeTo]="route"
-          routerLinkActive="chat-history__item--active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <mat-icon matListItemIcon>chat_bubble_outline</mat-icon>
-          <span matListItemTitle>{{ chat.title }}</span>
-          @if (chat.preview) {
-            <span matListItemLine>{{ chat.preview }}</span>
-          }
-        </a>
-      } @empty {
-        <div class="chat-history__message">Nessuna conversazione recente</div>
-      }
+      <!-- Conversation list -->
+      <nav
+        aria-label="Cronologia conversazioni"
+        class="min-h-0 gap-0.5 px-1 flex flex-col overflow-y-auto"
+      >
+        @for (chat of store.items(); track chat.id) {
+          <a
+            [routerLink]="['/chat']"
+            [queryParams]="{
+              chat_id: chat.id,
+            }"
+            class="group min-w-0 rounded-xl px-3 py-2.5 hover:bg-gray-100 focus-visible:ring-emerald-500 dark:hover:bg-white/[0.045] relative flex flex-col transition-colors duration-150 focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <!-- Active indicator -->
+            <div
+              class="left-0 h-7 w-0.5 bg-emerald-500 absolute top-1/2 -translate-y-1/2 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
+            ></div>
+
+            <!-- Title row -->
+            <div class="min-w-0 gap-2 flex items-center">
+              <div
+                class="h-7 w-7 rounded-lg bg-gray-100 group-hover:bg-white dark:bg-white/5 dark:group-hover:bg-white/10 flex shrink-0 items-center justify-center transition-colors"
+              >
+                <mat-icon
+                  class="!h-4 !w-4 text-gray-400 group-hover:text-emerald-500 dark:text-gray-500 dark:group-hover:text-emerald-400 !text-[17px] transition-colors"
+                >
+                  chat_bubble_outline
+                </mat-icon>
+              </div>
+
+              <span
+                class="min-w-0 text-sm font-medium text-gray-700 group-hover:text-gray-900 dark:text-gray-200 dark:group-hover:text-white flex-1 truncate transition-colors"
+                [title]="chat.title"
+              >
+                {{ chat.title }}
+              </span>
+
+              <mat-icon
+                class="!h-4 !w-4 text-gray-300 group-hover:translate-x-0.5 dark:text-gray-600 shrink-0 !text-[17px] opacity-0 transition-all duration-150 group-hover:opacity-100"
+              >
+                chevron_right
+              </mat-icon>
+            </div>
+
+            <!-- Preview -->
+            @if (chat.preview) {
+              <p
+                class="ml-9 mt-1 text-xs leading-4 text-gray-500 dark:text-gray-500 line-clamp-2"
+                [title]="chat.preview"
+              >
+                {{ chat.preview }}
+              </p>
+            }
+
+            <!-- Date -->
+            <div class="ml-9 mt-1.5 gap-1 flex items-center">
+              <mat-icon
+                class="!h-3 !w-3 text-gray-300 dark:text-gray-600 !text-[12px]"
+              >
+                schedule
+              </mat-icon>
+
+              <time
+                class="tracking-wide text-gray-400 dark:text-gray-600 text-[10px] uppercase"
+                [dateTime]="chat.createdAt"
+              >
+                {{ chat.createdAt | date: 'short' }}
+              </time>
+            </div>
+          </a>
+        }
+      </nav>
     }
-  </mat-action-list>
+  }
 </section>

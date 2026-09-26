@@ -1,26 +1,21 @@
-import {
-  Component,
-  computed,
-  inject,
-  input,
-  linkedSignal,
-  signal,
-} from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { ChatService } from '../../api';
-import { ChatStreamService } from '../../core/services/chat-stream/chat-stream';
-import {
-  ChatMessage,
-  ChatConversation,
-  ChatApiResponse,
-  ChatApiMessage,
-} from '../../core/models/chat';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { ChatService } from '../../api';
+import {
+  ChatApiConversation,
+  ChatCitation,
+  ChatConversation,
+  ChatMessage,
+} from '../../core/models/chat';
+import { ChatStreamService } from '../../core/services/chat/chat-stream';
+import { ChatHistoryStore } from '../../shared/services/chat-history-store';
 
 @Component({
   selector: 'app-chat',
@@ -38,50 +33,35 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class Chat {
   private readonly chatService = inject(ChatService);
   private readonly chatStreamService = inject(ChatStreamService);
+  private readonly chatHistoryStore = inject(ChatHistoryStore);
 
   readonly chat_id = input<string | undefined>();
+
   readonly draft = signal('');
   readonly sending = signal(false);
 
-  /**
-   * Messaggi locali temporanei
-   *
-   * - il valore iniziale deriva dalla conversazione caricata;
-   * - il componente deve poterlo modificare durante lo streaming;
-   * - quando cambia la conversazione, lo stato locale deve riallinearsi automaticamente
-   *
-   * In particolare, manteniamo solamente i messaggi che
-   * non sono ancora presenti nella risposta del backend
-   */
-  readonly localMessages = linkedSignal<ChatMessage[], ChatMessage[]>({
-    source: () => this.serverConversation()?.messages ?? [],
-
-    computation: (serverMessages, previous) => {
-      if (!previous) {
-        return [];
-      }
-
-      const serverMessageIds = new Set(
-        serverMessages.map((message) => message.id),
-      );
-
-      return previous.value.filter(
-        (message) => !serverMessageIds.has(message.id),
-      );
-    },
-  });
+  private readonly pendingMessages = signal<ChatMessage[]>([]);
+  private readonly pendingChatId = signal<string | undefined>(undefined);
 
   readonly chatResource = rxResource({
     params: () => {
-      const chat_id = this.chat_id();
-      return chat_id ? { chat_id } : undefined;
+      const chatId = this.chat_id();
+
+      return chatId
+        ? {
+            chatId,
+          }
+        : undefined;
     },
 
     stream: ({ params }) =>
-      this.chatService.getChatApiChatChatIdGet(params.chat_id),
+      this.chatService.getChatApiChatChatIdGet(params.chatId),
   });
+
   readonly serverConversation = computed<ChatConversation | null>(() => {
     const value = this.chatResource.value();
+    console.log(value);
+    
 
     if (!value) {
       return null;
@@ -89,30 +69,43 @@ export class Chat {
 
     return this.mapConversation(value);
   });
+
   readonly loading = computed(() => this.chatResource.isLoading());
+
   readonly loadError = computed(() => this.chatResource.error());
 
-  /**
-   * Messaggi effettivamente visualizzati dalla UI.
-   */
   readonly messages = computed(() => {
     const serverMessages = this.serverConversation()?.messages ?? [];
-    const localMessages = this.localMessages();
 
-    if (localMessages.length === 0) {
+    const currentChatId = this.chat_id();
+    const pendingChatId = this.pendingChatId();
+
+    const pendingMessages =
+      currentChatId === pendingChatId ? this.pendingMessages() : [];
+
+    if (pendingMessages.length === 0) {
       return serverMessages;
     }
 
-    return [...serverMessages, ...localMessages];
+    if (serverMessages.length === 0) {
+      return pendingMessages;
+    }
+
+    const visiblePendingMessages = pendingMessages.filter(
+      (pendingMessage) =>
+        !serverMessages.some((serverMessage) =>
+          this.isSameMessage(serverMessage, pendingMessage),
+        ),
+    );
+
+    return [...serverMessages, ...visiblePendingMessages];
   });
 
-  readonly showMessages = computed(() => {
-    return this.messages().length > 0;
-  });
+  readonly showMessages = computed(() => this.messages().length > 0);
 
-  readonly canSend = computed(() => {
-    return !this.sending() && this.draft().trim().length > 0;
-  });
+  readonly canSend = computed(
+    () => !this.sending() && this.draft().trim().length > 0,
+  );
 
   updateDraft(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
@@ -157,7 +150,9 @@ export class Chat {
       status: 'streaming',
     });
 
-    this.localMessages.update((messages) => [
+    this.pendingChatId.set(this.chat_id());
+
+    this.pendingMessages.update((messages) => [
       ...messages,
       userMessage,
       assistantMessage,
@@ -169,6 +164,7 @@ export class Chat {
     const controller = new AbortController();
 
     let assistantText = '';
+    let citations: ChatCitation[] = [];
 
     try {
       for await (const event of this.chatStreamService.streamChat({
@@ -176,25 +172,46 @@ export class Chat {
         history,
         signal: controller.signal,
       })) {
-        if (event.type !== 'content') {
-          continue;
+        switch (event.type) {
+          case 'content': {
+            assistantText += event.delta;
+
+            this.updateMessage(assistantMessage.id, {
+              content: assistantText,
+            });
+
+            break;
+          }
+
+          case 'citations': {
+            citations = event.references;
+
+            this.updateMessage(assistantMessage.id, {
+              citations,
+            });
+
+            break;
+          }
+
+          case 'error': {
+            throw new Error(event.message);
+          }
         }
-
-        assistantText += event.delta;
-
-        this.updateMessage(assistantMessage.id, {
-          content: assistantText,
-        });
       }
 
       if (assistantText) {
         this.updateMessage(assistantMessage.id, {
+          content: assistantText,
           status: 'complete',
+          citations,
         });
+
+        this.chatHistoryStore.refresh();
       } else {
         this.updateMessage(assistantMessage.id, {
           content: 'Nessuna risposta ricevuta.',
           status: 'error',
+          citations,
         });
       }
     } catch (error: unknown) {
@@ -202,12 +219,11 @@ export class Chat {
         return;
       }
 
-      console.error('Chat streaming error:', error);
-
       this.updateMessage(assistantMessage.id, {
         content:
           assistantText || 'Si è verificato un errore durante la risposta.',
         status: 'error',
+        citations,
       });
     } finally {
       this.sending.set(false);
@@ -227,7 +243,7 @@ export class Chat {
   }
 
   private updateMessage(messageId: string, patch: Partial<ChatMessage>): void {
-    this.localMessages.update((messages) =>
+    this.pendingMessages.update((messages) =>
       messages.map((message) =>
         message.id === messageId
           ? {
@@ -239,51 +255,78 @@ export class Chat {
     );
   }
 
+  private isSameMessage(first: ChatMessage, second: ChatMessage): boolean {
+    return first.role === second.role && first.content === second.content;
+  }
+
   private isAbortError(error: unknown): boolean {
     return error instanceof DOMException && error.name === 'AbortError';
   }
 
   private mapConversation(value: unknown): ChatConversation | null {
-    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    const conversation = this.extractConversation(value);
+
+    if (!conversation) {
       return null;
     }
 
-    const data = value as ChatApiResponse;
+    const messages: ChatMessage[] = [];
 
-    const id = typeof data.id === 'string' ? data.id : (this.chat_id() ?? '');
-
-    if (!Array.isArray(data.messages)) {
-      return {
-        id,
-        messages: [],
-      };
+    if (conversation.query.trim()) {
+      messages.push({
+        id: `${conversation.id}:user`,
+        role: 'user',
+        content: conversation.query,
+        time: conversation.created_at,
+        status: 'complete',
+      });
     }
 
-    const messages = data.messages
-      .filter(this.isApiMessage)
-      .map((message, index) => ({
-        id: typeof message.id === 'string' ? message.id : `message-${index}`,
-
-        role:
-          message.role === 'user' ? ('user' as const) : ('assistant' as const),
-
-        content: typeof message.content === 'string' ? message.content : '',
-
-        time:
-          typeof message.time === 'string'
-            ? message.time
-            : new Date().toISOString(),
-
-        status: 'complete' as const,
-      }));
+    if (conversation.response.trim()) {
+      messages.push({
+        id: `${conversation.id}:assistant`,
+        role: 'assistant',
+        content: conversation.response,
+        time: conversation.created_at,
+        status: 'complete',
+        citations: conversation.citations,
+      });
+    }
 
     return {
-      id,
+      id: conversation.id,
       messages,
     };
   }
 
-  private isApiMessage(value: unknown): value is ChatApiMessage {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  private extractConversation(value: unknown): ChatApiConversation | null {
+    if (typeof value !== 'object' || value === null) {
+      return null;
+    }
+
+    if (Array.isArray(value)) {
+      const first = value[0];
+
+      return this.isApiConversation(first) ? first : null;
+    }
+
+    return this.isApiConversation(value) ? value : null;
+  }
+
+  private isApiConversation(value: unknown): value is ChatApiConversation {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      return false;
+    }
+
+    const conversation = value as Record<string, unknown>;
+
+    return (
+      typeof conversation['id'] === 'string' &&
+      typeof conversation['user_id'] === 'string' &&
+      typeof conversation['created_at'] === 'string' &&
+      typeof conversation['query'] === 'string' &&
+      typeof conversation['response'] === 'string' &&
+      Array.isArray(conversation['citations'])
+    );
   }
 }
