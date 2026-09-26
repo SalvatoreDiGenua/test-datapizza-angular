@@ -1,0 +1,5 @@
+<div class="gap-6 flex flex-col">
+  @for (message of messages(); track message.id) {
+    <app-chat-message [message]="message" />
+  }
+</div>
