@@ -1,4 +1,4 @@
-.chat__markdown {
+.chat__markdown ::ng-deep {
   display: block;
   line-height: 1.65;
   overflow-wrap: anywhere;
@@ -118,8 +118,7 @@
   }
 
   code {
-    border: 1px solid
-      color-mix(in srgb, var(--sys-outline) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--sys-outline) 70%, transparent);
     border-radius: 0.35rem;
     padding: 0.15rem 0.4rem;
     background: color-mix(in srgb, var(--sys-on-surface) 6%, transparent);
@@ -234,7 +233,8 @@
     padding: 0.1rem 0.4rem;
     background: color-mix(in srgb, var(--sys-on-surface) 7%, transparent);
     color: var(--sys-on-surface);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 0.8em;
   }
 

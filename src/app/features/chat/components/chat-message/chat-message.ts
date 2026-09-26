@@ -8,7 +8,7 @@ import { ChatMessage as ChatMessageModel } from '../../../../core/models/chat';
 @Component({
   selector: 'app-chat-message',
   templateUrl: './chat-message.html',
-  styleUrl: './chat-message.scss',
+  styleUrls: ['./chat-message.scss', './chat-markdown.scss'],
   imports: [DatePipe, MatIconModule, MarkdownComponent],
 })
 export class ChatMessage {
