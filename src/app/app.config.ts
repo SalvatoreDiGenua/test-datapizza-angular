@@ -15,6 +15,7 @@ import {
 } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
 import { provideTranslocoPersistLang } from '@jsverse/transloco-persist-lang';
+import { provideMarkdown } from 'ngx-markdown';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/http/interceptors/auth/auth-interceptor';
 import { errorInterceptor } from './core/http/interceptors/error/error-interceptor';
@@ -78,5 +79,6 @@ export const appConfig: ApplicationConfig = {
       basePath: environment.baseApiUrl,
       withCredentials: true,
     }),
+    provideMarkdown(),
   ],
 };
