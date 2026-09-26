@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MarkdownComponent } from 'ngx-markdown';
 
 import { ChatMessage as ChatMessageModel } from '../../../../core/models/chat';
 
@@ -8,7 +9,7 @@ import { ChatMessage as ChatMessageModel } from '../../../../core/models/chat';
   selector: 'app-chat-message',
   templateUrl: './chat-message.html',
   styleUrl: './chat-message.scss',
-  imports: [DatePipe, MatIconModule],
+  imports: [DatePipe, MatIconModule, MarkdownComponent],
 })
 export class ChatMessage {
   readonly message = input.required<ChatMessageModel>();
