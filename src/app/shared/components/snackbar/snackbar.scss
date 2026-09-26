@@ -73,3 +73,8 @@
     }
   }
 }
+
+::ng-deep .app-snackbar-panel .mdc-snackbar__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+}

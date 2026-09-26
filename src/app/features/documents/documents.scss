@@ -5,6 +5,10 @@
 }
 
 .documents {
+  border-radius: var(
+    --mat-card-outlined-container-shape,
+    var(--mat-sys-corner-medium)
+  );
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
@@ -66,20 +70,18 @@
 
   &__content {
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
     min-height: 0;
-
-    overflow: auto;
-
     padding: 1.5rem;
   }
 
   &__table-wrapper {
-    overflow: hidden;
-
+    flex: 1 1 10px;
+    display: flex;
+    overflow: auto;
     border: 1px solid var(--mat-sys-outline-variant);
-
     border-radius: 0.75rem;
-
     background: var(--mat-sys-surface-container);
   }
 
