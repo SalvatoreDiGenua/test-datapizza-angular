@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+.chat__field {
+  --mdc-outlined-text-field-container-shape: 1rem;
+  margin: 0;
+}
+
+.chat__field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  min-height: 18px;
+}
+
+.chat__field ::ng-deep .mat-mdc-form-field-infix {
+  min-height: 24px;
+}
+
+.chat__field textarea {
+  max-height: 180px;
+  resize: vertical;
+}
+
+@media (max-width: 640px) {
+  .chat__field {
+    --mdc-outlined-text-field-container-shape: 0.875rem;
+  }
+
+  .chat__field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .chat__send {
+    min-width: 56px;
+    padding-inline: 0.75rem !important;
+  }
+}
