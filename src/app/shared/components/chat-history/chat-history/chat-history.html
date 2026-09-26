@@ -1,0 +1,32 @@
+<section class="chat-history" aria-label="Cronologia chat">
+  <h2 class="chat-history__title">Conversazioni</h2>
+
+  <mat-action-list aria-label="Le tue conversazioni">
+    @if (loading()) {
+      <div class="chat-history__message" role="status">Caricamento chat...</div>
+    } @else if (loadError()) {
+      <div class="chat-history__message" role="status">
+        Impossibile caricare le conversazioni
+      </div>
+    } @else {
+      @for (chat of chats(); track chat.id) {
+        <a
+          mat-list-item
+          [routerLink]="['chat']"
+          [queryParams]="{ chat_id: chat.id }"
+          [relativeTo]="route"
+          routerLinkActive="chat-history__item--active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <mat-icon matListItemIcon>chat_bubble_outline</mat-icon>
+          <span matListItemTitle>{{ chat.title }}</span>
+          @if (chat.preview) {
+            <span matListItemLine>{{ chat.preview }}</span>
+          }
+        </a>
+      } @empty {
+        <div class="chat-history__message">Nessuna conversazione recente</div>
+      }
+    }
+  </mat-action-list>
+</section>

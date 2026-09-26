@@ -59,7 +59,7 @@ export class ChatService extends BaseService {
     observe?: 'body',
     reportProgress?: boolean,
     options?: {
-      httpHeaderAccept?: 'application/json';
+      httpHeaderAccept?: 'application/json' | 'application/x-ndjson';
       context?: HttpContext;
       transferCache?: boolean;
     },
@@ -70,7 +70,7 @@ export class ChatService extends BaseService {
     observe?: 'response',
     reportProgress?: boolean,
     options?: {
-      httpHeaderAccept?: 'application/json';
+      httpHeaderAccept?: 'application/json' | 'application/x-ndjson';
       context?: HttpContext;
       transferCache?: boolean;
     },
@@ -81,7 +81,7 @@ export class ChatService extends BaseService {
     observe?: 'events',
     reportProgress?: boolean,
     options?: {
-      httpHeaderAccept?: 'application/json';
+      httpHeaderAccept?: 'application/json' | 'application/x-ndjson';
       context?: HttpContext;
       transferCache?: boolean;
     },
@@ -92,7 +92,7 @@ export class ChatService extends BaseService {
     observe: any = 'body',
     reportProgress: boolean = false,
     options?: {
-      httpHeaderAccept?: 'application/json';
+      httpHeaderAccept?: 'application/json' | 'application/x-ndjson';
       context?: HttpContext;
       transferCache?: boolean;
     },
@@ -133,7 +133,10 @@ export class ChatService extends BaseService {
 
     let responseType_: 'text' | 'json' | 'blob' = 'json';
     if (localVarHttpHeaderAcceptSelected) {
-      if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+      if (
+        localVarHttpHeaderAcceptSelected.startsWith('text') ||
+        localVarHttpHeaderAcceptSelected.includes('ndjson')
+      ) {
         responseType_ = 'text';
       } else if (
         this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)

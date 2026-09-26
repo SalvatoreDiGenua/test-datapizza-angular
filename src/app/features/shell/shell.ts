@@ -5,12 +5,20 @@ import { Toolbar } from '../../shared/components/toolbar/toolbar';
 import { ShellService } from '../../core/services/shell/shell';
 import { Menu } from '../../shared/components/menu/menu/menu';
 import { MatCardModule } from '@angular/material/card';
+import { ChatHistory } from '../../shared/components/chat-history/chat-history/chat-history';
 
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
-  imports: [RouterOutlet, MatSidenavModule, Toolbar, Menu, MatCardModule],
+  imports: [
+    RouterOutlet,
+    MatSidenavModule,
+    Toolbar,
+    Menu,
+    MatCardModule,
+    ChatHistory,
+  ],
 })
 export class Shell {
   protected readonly shellService = inject(ShellService);

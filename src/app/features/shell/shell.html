@@ -4,7 +4,10 @@
       [mode]="shellService.drawerMode()"
       [opened]="shellService.isDrawerOpen()"
     >
-      <app-menu class="shell__menu" />
+      <div class="flex h-full flex-col">
+        <app-menu class="shell__menu grow" />
+        <app-chat-history class="shell__chat-history grow" />
+      </div>
     </mat-drawer>
     <mat-drawer-content class="shell__drawer-content">
       <div class="shell__main">

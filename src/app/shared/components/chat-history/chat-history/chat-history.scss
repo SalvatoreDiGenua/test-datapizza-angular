@@ -1,0 +1,31 @@
+:host {
+	display: block;
+	min-height: 0;
+	overflow: auto;
+}
+
+.chat-history {
+	padding: 12px 8px;
+}
+
+.chat-history__title {
+	margin: 4px 12px 8px;
+	color: #69766f;
+	font-size: 12px;
+	font-weight: 650;
+}
+
+.chat-history__message {
+	padding: 12px;
+	color: #7a8580;
+	font-size: 12px;
+}
+
+.chat-history a {
+	border-radius: 4px;
+}
+
+.chat-history a:hover,
+.chat-history a.chat-history__item--active {
+	background: #eef1ec;
+}
