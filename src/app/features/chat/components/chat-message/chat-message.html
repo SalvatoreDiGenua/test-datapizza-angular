@@ -1,0 +1,66 @@
+<article
+  class="chat__message gap-3 flex w-full"
+  [class.chat__message--user]="isUser()"
+  [class.chat__message--assistant]="isAssistant()"
+>
+  @if (isAssistant()) {
+    <div
+      class="mt-1 h-9 w-9 rounded-xl bg-primary/10 text-primary flex shrink-0 items-center justify-center"
+      aria-hidden="true"
+    >
+      <mat-icon fontIcon="auto_awesome"></mat-icon>
+    </div>
+  }
+
+  <div
+    class="chat__message-content min-w-0 sm:max-w-[75%] max-w-[85%]"
+  >
+    <div
+      class="mb-1.5 gap-2 font-medium text-slate-400 dark:text-slate-500 flex items-center text-[11px]"
+      [class.justify-end]="isUser()"
+    >
+      <span>{{ isUser() ? 'Tu' : 'Assistente' }}</span>
+      <span aria-hidden="true">·</span>
+      <time [attr.datetime]="message().time">
+        {{ message().time | date: 'HH:mm' }}
+      </time>
+    </div>
+
+    <div
+      class="chat__bubble rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm sm:text-[15px]"
+      [class.chat__bubble--user]="isUser()"
+      [class.chat__bubble--assistant]="isAssistant()"
+    >
+      @if (message().content) {
+        <p class="m-0 break-words whitespace-pre-wrap">
+          {{ message().content }}
+        </p>
+      }
+
+      @if (message().status === 'streaming') {
+        <div
+          class="chat__typing gap-1 flex items-center"
+          aria-label="L'assistente sta scrivendo"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      }
+
+      @if (message().status === 'error') {
+        <div
+          class="mt-2 gap-1.5 text-xs font-medium text-red-600 dark:text-red-400 flex items-center"
+        >
+          <mat-icon
+            class="!h-4 !w-4 !text-[16px]"
+            fontIcon="error_outline"
+            aria-hidden="true"
+          ></mat-icon>
+
+          <span>Errore nella risposta</span>
+        </div>
+      }
+    </div>
+  </div>
+</article>
