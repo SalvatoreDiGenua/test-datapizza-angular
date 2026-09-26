@@ -18,6 +18,7 @@ export class ChatSession {
 
   private readonly pendingMessages = signal<ChatMessage[]>([]);
   private readonly pendingChatId = signal<string | undefined>(undefined);
+  private activeController: AbortController | null = null;
 
   readonly sending = signal(false);
 
@@ -51,6 +52,10 @@ export class ChatSession {
     };
   }
 
+  cancel(): void {
+    this.activeController?.abort();
+  }
+
   async send(
     content: string,
     chatId: string | undefined,
@@ -81,6 +86,7 @@ export class ChatSession {
     this.sending.set(true);
 
     const controller = new AbortController();
+    this.activeController = controller;
 
     let assistantText = '';
     let citations: ChatCitation[] = [];
@@ -125,6 +131,7 @@ export class ChatSession {
       }
     } catch (error: unknown) {
       if (isAbortError(error)) {
+        this.removeMessage(assistantMessage.id);
         return;
       }
 
@@ -135,6 +142,9 @@ export class ChatSession {
         citations,
       });
     } finally {
+      if (this.activeController === controller) {
+        this.activeController = null;
+      }
       this.sending.set(false);
     }
   }
@@ -144,6 +154,12 @@ export class ChatSession {
       messages.map((message) =>
         message.id === messageId ? { ...message, ...patch } : message,
       ),
+    );
+  }
+
+  private removeMessage(messageId: string): void {
+    this.pendingMessages.update((messages) =>
+      messages.filter((message) => message.id !== messageId),
     );
   }
 }
