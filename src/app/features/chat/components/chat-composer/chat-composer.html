@@ -1,0 +1,40 @@
+<form class="max-w-4xl gap-2 mx-auto flex w-full" (submit)="submit()">
+  <mat-form-field class="chat__field flex-1" appearance="outline">
+    <mat-label>Messaggio</mat-label>
+
+    <textarea
+      matInput
+      rows="1"
+      [value]="draft()"
+      [disabled]="disabled()"
+      placeholder="Scrivi un messaggio..."
+      aria-label="Messaggio"
+      (input)="updateDraft($event)"
+      (keydown)="handleKeydown($event)"
+    ></textarea>
+
+    <mat-hint class="sm:block hidden">
+      Invio per inviare · Shift + Invio per andare a capo
+    </mat-hint>
+  </mat-form-field>
+
+  <button
+    mat-fab
+    extended
+    color="primary"
+    type="submit"
+    class="chat__send !h-14 mb-[4px]"
+    [disabled]="!canSend()"
+    [attr.aria-label]="disabled() ? 'Invio in corso' : 'Invia messaggio'"
+  >
+    @if (disabled()) {
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="20"
+        strokeWidth="2"
+      ></mat-progress-spinner>
+    } @else {
+      <mat-icon>send</mat-icon>
+    }
+  </button>
+</form>
