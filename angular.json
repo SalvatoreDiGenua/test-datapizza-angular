@@ -28,7 +28,8 @@
             "styles": ["src/styles.scss"],
             "security": {
               "allowedHosts": []
-            }
+            },
+            "externalDependencies": ["marked-katex-extension"]
           },
           "configurations": {
             "production": {
