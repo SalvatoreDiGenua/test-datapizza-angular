@@ -4,8 +4,8 @@ $theme: mat.define-theme(
   (
     color: (
       theme-type: light,
-      primary: mat.$blue-palette,
-      tertiary: mat.$orange-palette,
+      primary: mat.$green-palette,
+      tertiary: mat.$lime-palette,
     ),
     typography: (
       brand-family: '"Inter", sans-serif',
@@ -20,27 +20,113 @@ $theme: mat.define-theme(
 :root {
   @include mat.all-component-themes($theme);
 
-  --sys-primary: #2563eb;
-  --sys-primary-light: #60a5fa;
-  --sys-primary-dark: #1d4ed8;
+  /*
+   * Project design tokens
+   * ---------------------
+   * Tailwind and application CSS consume these semantic tokens.
+   * Angular Material is intentionally mapped to the same brand values below,
+   * so buttons, fields, surfaces and custom UI share one visual language.
+   */
+  --sys-primary: #0f766e;
+  --sys-primary-light: #14b8a6;
+  --sys-primary-dark: #115e59;
+  --sys-on-primary: #ffffff;
 
-  --sys-accent: #f97316;
+  --sys-accent: #84cc16;
+  --sys-accent-dark: #65a30d;
+  --sys-on-accent: #1a2e05;
 
-  --sys-surface: #f8fafc;
-  --sys-background: #ffffff;
+  --sys-background: #f4f7f6;
+  --sys-surface: #ffffff;
+  --sys-surface-muted: #e9f0ee;
+  --sys-surface-raised: #ffffff;
+
+  --sys-on-background: #17211f;
+  --sys-on-surface: #26332f;
+  --sys-on-surface-muted: #64736e;
+
+  --sys-outline: #d4dfdb;
+  --sys-outline-strong: #b7c8c2;
+
+  --sys-success: #15803d;
+  --sys-warning: #a16207;
+  --sys-error: #b91c1c;
+
+  /* Angular Material semantic bridge */
+  --mat-sys-primary: var(--sys-primary);
+  --mat-sys-on-primary: var(--sys-on-primary);
+  --mat-sys-primary-container: #ccfbf1;
+  --mat-sys-on-primary-container: #134e4a;
+
+  --mat-sys-tertiary: var(--sys-accent);
+  --mat-sys-on-tertiary: var(--sys-on-accent);
+  --mat-sys-tertiary-container: #ecfccb;
+  --mat-sys-on-tertiary-container: #365314;
+
+  --mat-sys-background: var(--sys-background);
+  --mat-sys-on-background: var(--sys-on-background);
+  --mat-sys-surface: var(--sys-surface);
+  --mat-sys-on-surface: var(--sys-on-surface);
+  --mat-sys-outline: var(--sys-outline);
 
   --mdc-filled-button-container-color: var(--sys-primary);
-  --mdc-filled-button-label-text-color: #ffffff;
+  --mdc-filled-button-label-text-color: var(--sys-on-primary);
   --mdc-circular-progress-active-indicator-color: var(--sys-primary);
   --mdc-text-button-label-text-color: var(--sys-primary);
 
-  --mat-sidenav-container-width: 260px;
+  --mat-sidenav-container-width: 280px;
+
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --sys-surface: #1e293b;
-    --sys-background: #0f172a;
-    --mdc-filled-button-container-color: var(--sys-primary-light);
+    --sys-primary: #2dd4bf;
+    --sys-primary-light: #5eead4;
+    --sys-primary-dark: #14b8a6;
+    --sys-on-primary: #06201d;
+
+    --sys-accent: #a3e635;
+    --sys-accent-dark: #84cc16;
+    --sys-on-accent: #1a2e05;
+
+    --sys-background: #0b1210;
+    --sys-surface: #111b18;
+    --sys-surface-muted: #182520;
+    --sys-surface-raised: #16211e;
+
+    --sys-on-background: #e5efec;
+    --sys-on-surface: #d8e5e1;
+    --sys-on-surface-muted: #91a39d;
+
+    --sys-outline: #30423c;
+    --sys-outline-strong: #405750;
+
+    --sys-success: #4ade80;
+    --sys-warning: #facc15;
+    --sys-error: #f87171;
+
+    --mat-sys-primary: var(--sys-primary);
+    --mat-sys-on-primary: var(--sys-on-primary);
+    --mat-sys-primary-container: #134e4a;
+    --mat-sys-on-primary-container: #ccfbf1;
+
+    --mat-sys-tertiary: var(--sys-accent);
+    --mat-sys-on-tertiary: var(--sys-on-accent);
+    --mat-sys-tertiary-container: #365314;
+    --mat-sys-on-tertiary-container: #ecfccb;
+
+    --mat-sys-background: var(--sys-background);
+    --mat-sys-on-background: var(--sys-on-background);
+    --mat-sys-surface: var(--sys-surface);
+    --mat-sys-on-surface: var(--sys-on-surface);
+    --mat-sys-outline: var(--sys-outline);
+
+    --mdc-filled-button-container-color: var(--sys-primary);
+    --mdc-filled-button-label-text-color: var(--sys-on-primary);
+    --mdc-circular-progress-active-indicator-color: var(--sys-primary);
+    --mdc-text-button-label-text-color: var(--sys-primary);
+
+    color-scheme: dark;
   }
 }
