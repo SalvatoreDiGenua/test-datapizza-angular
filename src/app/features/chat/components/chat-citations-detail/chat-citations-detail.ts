@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
@@ -9,7 +9,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ChatCitation } from '../../../../core/models/chat';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
-import { environment } from '../../../../../environments/environment.development';
+import { DocumentsService } from '../../../../api';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -18,7 +19,8 @@ import { environment } from '../../../../../environments/environment.development
   imports: [GetFileExtension, MatIconModule, MatProgressSpinnerModule],
 })
 export class ChatCitationsDetail {
-  private readonly http = inject(HttpClient);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly documentsService = inject(DocumentsService);
   private readonly bottomSheetRef = inject(
     MatBottomSheetRef<ChatCitationsDetail>,
   );
@@ -53,17 +55,18 @@ export class ChatCitationsDetail {
 
     this.downloading.update((ids) => new Set(ids).add(documentId));
 
-    const url = `${environment.baseApiUrl}/api/documents/${encodeURIComponent(documentId)}/file`;
-
-    this.http.get(url, { responseType: 'blob' }).subscribe({
-      next: (blob) => {
-        this.saveFile(blob, filename);
-        this.removeDownloading(documentId);
-      },
-      error: () => {
-        this.removeDownloading(documentId);
-      },
-    });
+    this.documentsService
+      .getDocumentApiDocumentsDocIdGet(documentId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob) => {
+          this.saveFile(blob, filename);
+          this.removeDownloading(documentId);
+        },
+        error: () => {
+          this.removeDownloading(documentId);
+        },
+      });
   }
 
   isDownloading(documentId: string): boolean {
