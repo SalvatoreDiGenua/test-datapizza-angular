@@ -74,6 +74,11 @@ export class PdfViewer {
 
   async onAnnotationEditorLayerRendered(event: {
     pageNumber: number;
+    source?: {
+      pdfPage?: {
+        view?: number[];
+      };
+    };
   }): Promise<void> {
     const pageNumber = event.pageNumber;
 
@@ -89,22 +94,56 @@ export class PdfViewer {
       return;
     }
 
+    const pageView = event.source ?? this.getPageView(pageNumber);
+    const pageSize = pageView?.pdfPage?.view;
+
+    if (!pageSize || pageSize.length < 4) {
+      return;
+    }
+
+    const pageWidthPoints = Math.abs(pageSize[2] - pageSize[0]);
+    const pageHeightPoints = Math.abs(pageSize[3] - pageSize[1]);
+    const pointsPerInch = 72;
+
+    if (!pageWidthPoints || !pageHeightPoints) {
+      return;
+    }
+
     let applied = false;
 
     for (const highlight of pageHighlights) {
-      const coordinates = this.toPdfCoordinates(highlight, pageNumber);
+      if (highlight.unit !== 'inches') {
+        continue;
+      }
 
-      if (!coordinates) {
+      const left = (highlight.x * pointsPerInch) / pageWidthPoints;
+      const right =
+        ((highlight.x + highlight.width) * pointsPerInch) / pageWidthPoints;
+      const top =
+        1 - (highlight.y * pointsPerInch) / pageHeightPoints;
+      const bottom =
+        1 -
+        ((highlight.y + highlight.height) * pointsPerInch) /
+          pageHeightPoints;
+
+      if (
+        left < 0 ||
+        right <= left ||
+        bottom < 0 ||
+        top <= bottom ||
+        left > 1 ||
+        bottom > 1
+      ) {
         continue;
       }
 
       await this.pdfViewerService.addHighlightToAnnotationLayer(
         highlight.color ?? [255, 220, 0],
         pageNumber - 1,
-        coordinates.left,
-        coordinates.bottom,
-        coordinates.right,
-        coordinates.top,
+        `${left * 100}%`,
+        `${bottom * 100}%`,
+        `${right * 100}%`,
+        `${top * 100}%`,
         highlight.thickness ?? 10,
         0,
         highlight.opacity ?? 0.45,
@@ -117,15 +156,22 @@ export class PdfViewer {
       return;
     }
 
-    if (pageNumber === this.page()) {
-      const first = this.toNormalizedHighlight(pageHighlights[0], pageNumber);
+    const first = pageHighlights[0];
 
-      if (first) {
-        this.pdfViewerService.scrollPageIntoView(pageNumber, {
-          top: `${Math.max(0, Math.min(100, first.y * 100 - 8))}%`,
-          left: `${Math.max(0, Math.min(100, first.x * 100 - 8))}%`,
-        });
-      }
+    if (pageNumber === this.page() && first.unit === 'inches') {
+      const top =
+        (first.y * pointsPerInch) / pageHeightPoints;
+
+      this.pdfViewerService.scrollPageIntoView(pageNumber, {
+        top: `${Math.max(0, Math.min(100, top * 100 - 8))}%`,
+        left: `${Math.max(
+          0,
+          Math.min(
+            100,
+            ((first.x * pointsPerInch) / pageWidthPoints) * 100 - 8,
+          ),
+        )}%`,
+      });
     }
 
     this.appliedHighlightPages.update((pages) => {
@@ -133,90 +179,6 @@ export class PdfViewer {
       next.add(pageNumber);
       return next;
     });
-  }
-
-  private toPdfCoordinates(
-    highlight: PdfViewerHighlight,
-    pageNumber: number,
-  ): {
-    left: number;
-    bottom: number;
-    right: number;
-    top: number;
-  } | null {
-    if (highlight.unit !== 'inches') {
-      return null;
-    }
-
-    const pageView = this.getPageView(pageNumber);
-
-    if (!pageView?.pdfPage?.view) {
-      return null;
-    }
-
-    const [, bottomDim, , topDim] = pageView.pdfPage.view as [
-      number,
-      number,
-      number,
-      number,
-    ];
-    const pageHeightPoints = Math.abs(topDim - bottomDim);
-    const pointsPerInch = 72;
-
-    if (!pageHeightPoints) {
-      return null;
-    }
-
-    const left = highlight.x * pointsPerInch;
-    const right = (highlight.x + highlight.width) * pointsPerInch;
-    const top = pageHeightPoints - highlight.y * pointsPerInch;
-    const bottom =
-      pageHeightPoints - (highlight.y + highlight.height) * pointsPerInch;
-
-    return {
-      left,
-      bottom,
-      right,
-      top,
-    };
-  }
-
-  private toNormalizedHighlight(
-    highlight: PdfViewerHighlight,
-    pageNumber: number,
-  ): PdfViewerHighlight | null {
-    if (highlight.unit !== 'inches') {
-      return highlight;
-    }
-
-    const pageView = this.getPageView(pageNumber);
-
-    if (!pageView?.pdfPage?.view) {
-      return null;
-    }
-
-    const [, bottomDim, rightDim, topDim] = pageView.pdfPage.view as [
-      number,
-      number,
-      number,
-      number,
-    ];
-    const pageWidthPoints = Math.abs(rightDim - (pageView.pdfPage.view as number[])[0]);
-    const pageHeightPoints = Math.abs(topDim - bottomDim);
-    const pointsPerInch = 72;
-
-    if (!pageWidthPoints || !pageHeightPoints) {
-      return null;
-    }
-
-    return {
-      ...highlight,
-      x: (highlight.x * pointsPerInch) / pageWidthPoints,
-      y: (highlight.y * pointsPerInch) / pageHeightPoints,
-      width: (highlight.width * pointsPerInch) / pageWidthPoints,
-      height: (highlight.height * pointsPerInch) / pageHeightPoints,
-      unit: 'normalized',
-    };
   }
 
   private getPageView(pageNumber: number): any | null {
