@@ -36,16 +36,14 @@
       </p>
 
       @for (file of files(); track file.documentId) {
-        <div
-          class="gap-3 rounded-xl border-slate-200 p-3 dark:border-slate-700 flex items-center border transition-colors"
-          [class.border-primary]="selectedFileId() === file.documentId"
+        <button
+          matButton
+          type="button"
+          class="!h-auto !min-h-0 !w-full !justify-start !rounded-xl !border !border-slate-200 !p-3 !text-left dark:!border-slate-700"
+          [class.!border-primary]="selectedFileId() === file.documentId"
+          [attr.aria-pressed]="selectedFileId() === file.documentId"
+          (click)="selectFile(file.documentId)"
         >
-          <button
-            type="button"
-            class="min-w-0 flex flex-1 items-center gap-3 text-left"
-            [attr.aria-pressed]="selectedFileId() === file.documentId"
-            (click)="selectFile(file.documentId)"
-          >
             <span
               class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
               aria-hidden="true"
@@ -82,8 +80,7 @@
             } @else {
               <mat-icon fontIcon="download" aria-hidden="true"></mat-icon>
             }
-          </button>
-        </div>
+        </button>
       } @empty {
         <p class="py-8 text-sm text-slate-500 dark:text-slate-400 text-center">
           Nessuna citazione disponibile.
