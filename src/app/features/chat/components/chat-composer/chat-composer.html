@@ -4,7 +4,7 @@
       matInput
       rows="3"
       [value]="draft()"
-      [disabled]="disabled()"
+      [disabled]="!canCompose() || disabled()"
       placeholder="Scrivi un messaggio..."
       aria-label="Messaggio"
       (input)="updateDraft($event)"
@@ -21,8 +21,14 @@
     color="primary"
     type="button"
     class="chat__send"
-    [disabled]="disabled() ? false : !canSend()"
-    [attr.aria-label]="disabled() ? 'Annulla invio' : 'Invia messaggio'"
+    [disabled]="!canCompose() || (!disabled() && !canSend())"
+    [attr.aria-label]="
+      !canCompose()
+        ? 'Invio messaggi non disponibile'
+        : disabled()
+          ? 'Annulla invio'
+          : 'Invia messaggio'
+    "
     (click)="disabled() ? cancel() : submit()"
   >
     @if (disabled()) {
