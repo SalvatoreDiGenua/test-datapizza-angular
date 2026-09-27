@@ -1,13 +1,8 @@
-import {
-  Component,
-  effect,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import {
   NgxExtendedPdfViewerModule,
   NgxExtendedPdfViewerService,
+  PdfSrcType,
 } from 'ngx-extended-pdf-viewer';
 
 export interface PdfViewerHighlight {
@@ -29,7 +24,7 @@ export interface PdfViewerHighlight {
   imports: [NgxExtendedPdfViewerModule],
 })
 export class PdfViewer {
-  readonly src = input.required<string | Blob | ArrayBuffer>();
+  readonly src = input.required<PdfSrcType>();
   readonly page = input(1);
   readonly height = input('100%');
   readonly showToolbar = input(true);
@@ -119,12 +114,10 @@ export class PdfViewer {
       const left = (highlight.x * pointsPerInch) / pageWidthPoints;
       const right =
         ((highlight.x + highlight.width) * pointsPerInch) / pageWidthPoints;
-      const top =
-        1 - (highlight.y * pointsPerInch) / pageHeightPoints;
+      const top = 1 - (highlight.y * pointsPerInch) / pageHeightPoints;
       const bottom =
         1 -
-        ((highlight.y + highlight.height) * pointsPerInch) /
-          pageHeightPoints;
+        ((highlight.y + highlight.height) * pointsPerInch) / pageHeightPoints;
 
       if (
         left < 0 ||
@@ -159,8 +152,7 @@ export class PdfViewer {
     const first = pageHighlights[0];
 
     if (pageNumber === this.page() && first.unit === 'inches') {
-      const top =
-        (first.y * pointsPerInch) / pageHeightPoints;
+      const top = (first.y * pointsPerInch) / pageHeightPoints;
 
       this.pdfViewerService.scrollPageIntoView(pageNumber, {
         top: `${Math.max(0, Math.min(100, top * 100 - 8))}%`,
@@ -182,9 +174,8 @@ export class PdfViewer {
   }
 
   private getPageView(pageNumber: number): any | null {
-    const pdfViewerApplication = (
-      globalThis as { PDFViewerApplication?: any }
-    ).PDFViewerApplication;
+    const pdfViewerApplication = (globalThis as { PDFViewerApplication?: any })
+      .PDFViewerApplication;
 
     return pdfViewerApplication?.pdfViewer?.getPageView(pageNumber - 1) ?? null;
   }
