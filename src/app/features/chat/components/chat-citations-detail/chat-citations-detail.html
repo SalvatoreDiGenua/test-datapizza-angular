@@ -12,53 +12,49 @@
   </header>
 
   <div class="citations-layout min-h-0 gap-3 p-3 overflow flex flex-1">
-    <aside
-      class="documents-sidebar min-h-0 gap-2 flex flex-col overflow-y-auto"
-    >
-      <p
-        class="m-0 px-2 text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase"
-      >
-        Documenti
-      </p>
-
-      @for (file of files(); track file.documentId) {
-        <button
-          matButton
-          type="button"
-          class="!min-h-0 !rounded-xl !border-slate-200 !p-3 dark:!border-slate-700 !h-auto !w-full !justify-start !border !text-left"
-          [class.border-primary!]="selectedFileId() === file.documentId"
-          [attr.aria-pressed]="selectedFileId() === file.documentId"
-          (click)="selectFile(file.documentId)"
-        >
-          <div class="gap-2 align-center flex">
-            <span
-              class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
-              aria-hidden="true"
-            >
-              {{ file.filename | getFileExtension }}
-            </span>
-
-            <span class="min-w-0 grid">
+    <aside class="documents-sidebar min-h-0 gap-2 flex flex-col">
+      <div class="gap-3 flex flex-[1_1_10px] flex-col overflow-auto">
+        @for (file of files(); track file.documentId) {
+          <button
+            matButton
+            type="button"
+            class="!min-h-0 !rounded-xl !border-slate-200 !p-3 dark:!border-slate-700 !h-auto !w-full !justify-start !border !text-left"
+            [class.border-primary!]="selectedFileId() === file.documentId"
+            [attr.aria-pressed]="selectedFileId() === file.documentId"
+            (click)="selectFile(file.documentId)"
+          >
+            <div class="gap-2 align-center flex">
               <span
-                class="text-sm font-semibold block truncate text-[var(--sys-on-surface)]"
-                [title]="file.filename"
+                class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
+                aria-hidden="true"
               >
-                {{ file.filename }}
+                {{ file.filename | getFileExtension }}
               </span>
-              <span
-                class="text-xs text-slate-500 dark:text-slate-400 block truncate"
-              >
-                {{ file.citations.length }}
-                {{ file.citations.length > 1 ? 'citazioni' : 'citazione' }}
+
+              <span class="min-w-0 grid">
+                <span
+                  class="text-sm font-semibold block truncate text-[var(--sys-on-surface)]"
+                  [title]="file.filename"
+                >
+                  {{ file.filename }}
+                </span>
+                <span
+                  class="text-xs text-slate-500 dark:text-slate-400 block truncate"
+                >
+                  {{ file.citations.length }}
+                  {{ file.citations.length > 1 ? 'citazioni' : 'citazione' }}
+                </span>
               </span>
-            </span>
-          </div>
-        </button>
-      } @empty {
-        <p class="py-8 text-sm text-slate-500 dark:text-slate-400 text-center">
-          Nessuna citazione disponibile.
-        </p>
-      }
+            </div>
+          </button>
+        } @empty {
+          <p
+            class="py-8 text-sm text-slate-500 dark:text-slate-400 text-center"
+          >
+            Nessuna citazione disponibile.
+          </p>
+        }
+      </div>
     </aside>
 
     <section
@@ -66,11 +62,10 @@
     >
       @if (selectedFile(); as file) {
         <header
-          class="document-toolbar px-4 py-3 gap-2 flex shrink-0 items-center border-b border-[var(--sys-outline)]"
+          class="document-toolbar px-4 py-3 gap-3 flex shrink-0 items-center border-b border-[var(--sys-outline)]"
         >
           <div class="mobile-document-select">
             <mat-form-field appearance="outline" subscriptSizing="dynamic">
-              <mat-label>Documento</mat-label>
               <mat-select
                 [value]="selectedFileId()"
                 (selectionChange)="selectFile($event.value)"
@@ -86,7 +81,7 @@
           </div>
 
           <p
-            class="document-title m-0 text-sm font-semibold truncate text-[var(--sys-on-surface)]"
+            class="document-title m-0 text-sm font-semibold min-w-min truncate text-[var(--sys-on-surface)]"
             [title]="file.filename"
           >
             {{ file.filename }}
