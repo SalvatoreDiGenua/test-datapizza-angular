@@ -7,12 +7,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import {
-  MAT_BOTTOM_SHEET_DATA,
-  MatBottomSheetRef,
-} from '@angular/material/bottom-sheet';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { DocumentsService } from '../../../../api';
 import { ChatCitation } from '../../../../core/models/chat';
 import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
@@ -32,10 +30,8 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
   private readonly documentsService = inject(DocumentsService);
-  private readonly bottomSheetRef = inject(
-    MatBottomSheetRef<ChatCitationsDetail>,
-  );
-  private readonly citations = inject<ChatCitation[]>(MAT_BOTTOM_SHEET_DATA);
+  private readonly dialogRef = inject(MatDialogRef<ChatCitationsDetail>);
+  private readonly citations = inject<ChatCitation[]>(MAT_DIALOG_DATA);
 
   readonly files = computed(() => {
     const files = new Map<string, ChatCitation[]>();
@@ -89,7 +85,7 @@ export class ChatCitationsDetail {
   }
 
   close(): void {
-    this.bottomSheetRef.dismiss();
+    this.dialogRef.close();
   }
 
   selectFile(documentId: string): void {
