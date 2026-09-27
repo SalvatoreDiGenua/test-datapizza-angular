@@ -51,3 +51,10 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+@layer base {
+  ul,
+  ol {
+    list-style: unset !important;
+  }
+}
