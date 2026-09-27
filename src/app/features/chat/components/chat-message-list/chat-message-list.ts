@@ -1,4 +1,11 @@
-import { afterNextRender, Component, DestroyRef, ElementRef, inject, input } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  input,
+} from '@angular/core';
 
 import { ChatMessage as ChatMessageModel } from '../../../../core/models/chat';
 import { ChatMessage } from '../chat-message/chat-message';
@@ -19,7 +26,7 @@ export class ChatMessageList {
   constructor() {
     afterNextRender(() => {
       const messageList = this.elementRef.nativeElement;
-      const scrollContainer = messageList.closest<HTMLElement>('.chat__body');
+      const scrollContainer = messageList.closest('.chat__body');
 
       if (!scrollContainer) {
         return;
