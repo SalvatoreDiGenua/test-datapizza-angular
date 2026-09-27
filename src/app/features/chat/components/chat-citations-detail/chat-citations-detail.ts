@@ -47,7 +47,7 @@ export class ChatCitationsDetail {
   }
 
   downloadFile(documentId: string, filename: string): void {
-    if (this.downloading.has(documentId)) {
+    if (this.downloading().has(documentId)) {
       return;
     }
 
