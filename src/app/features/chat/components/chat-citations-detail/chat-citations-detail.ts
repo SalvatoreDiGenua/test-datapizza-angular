@@ -19,6 +19,7 @@ import {
   PdfViewerHighlight,
 } from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
+import { Auth } from '../../../../core/auth/auth';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -34,6 +35,7 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 })
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(Auth);
   private readonly documentsService = inject(DocumentsService);
   private readonly dialogRef = inject(MatDialogRef<ChatCitationsDetail>);
   private readonly citations = inject<ChatCitation[]>(MAT_DIALOG_DATA);
@@ -82,7 +84,10 @@ export class ChatCitationsDetail {
 
     return citation.bounding_regions.flatMap((region) =>
       region.rects_in.flatMap((rect) => {
-        if (rect.length !== 4 || rect.some((value) => !Number.isFinite(value))) {
+        if (
+          rect.length !== 4 ||
+          rect.some((value) => !Number.isFinite(value))
+        ) {
           return [];
         }
 
@@ -151,7 +156,15 @@ export class ChatCitationsDetail {
     this.loadingFile.set(true);
 
     this.documentsService
-      .getDocumentFileApiDocumentsDocIdFileGet(documentId)
+      .getDocumentFileApiDocumentsDocIdFileGet(
+        documentId,
+        this.auth.user()?.id,
+        'body',
+        false,
+        {
+          httpHeaderAccept: 'aplication/pdf' as any,
+        },
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {
