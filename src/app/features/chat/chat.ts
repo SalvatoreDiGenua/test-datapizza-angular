@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -32,6 +32,10 @@ export class Chat {
   readonly loading = this.chatResource.isLoading;
   readonly loadError = this.chatResource.error;
   readonly sending = this.session.sending;
+
+  readonly canCompose = computed(
+    () => !this.loading() && !this.loadError(),
+  );
 
   sendMessage(content: string): void {
     const history = this.messages().map(
