@@ -14,7 +14,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { DocumentsService } from '../../../../api';
 import { ChatCitation } from '../../../../core/models/chat';
-import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
+import {
+  PdfViewer,
+  PdfViewerHighlight,
+} from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 
 @Component({
@@ -27,7 +30,6 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
     MatIconModule,
     MatProgressSpinnerModule,
     PdfViewer,
-    MatButtonModule,
   ],
 })
 export class ChatCitationsDetail {
@@ -70,6 +72,41 @@ export class ChatCitationsDetail {
   readonly isSelectedFilePdf = computed(
     () => this.selectedFile()?.filename.toLowerCase().endsWith('.pdf') ?? false,
   );
+
+  readonly citationHighlights = computed<PdfViewerHighlight[]>(() => {
+    const citation = this.selectedCitation();
+
+    if (!citation?.bounding_regions?.length) {
+      return [];
+    }
+
+    return citation.bounding_regions.flatMap((region) =>
+      region.rects_in.flatMap((rect) => {
+        if (rect.length !== 4 || rect.some((value) => !Number.isFinite(value))) {
+          return [];
+        }
+
+        const [x, y, width, height] = rect;
+        const normalized = [x, y, width, height].every(
+          (value) => value >= 0 && value <= 1,
+        );
+
+        return [
+          {
+            page: region.page_number,
+            x,
+            y,
+            width,
+            height,
+            unit: normalized ? 'normalized' : 'inches',
+            color: [255, 220, 0] as [number, number, number],
+            opacity: 0.45,
+            thickness: 10,
+          },
+        ];
+      }),
+    );
+  });
 
   private readonly cachedFiles = new Map<string, Blob>();
 
