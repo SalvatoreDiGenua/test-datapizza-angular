@@ -37,7 +37,7 @@ export class PdfViewer {
   readonly handTool = input(false);
   readonly showSidebarButton = input(false);
   readonly showOpenFileButton = input(false);
-  readonly showPrintButton = input(false);
+  readonly showPrintButton = input(true);
   readonly showDownloadButton = input(false);
   readonly highlightText = input<string | null>(null);
   readonly highlights = input<PdfViewerHighlight[]>([]);
