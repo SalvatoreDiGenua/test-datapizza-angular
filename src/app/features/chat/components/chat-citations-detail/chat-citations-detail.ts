@@ -15,6 +15,7 @@ import { DocumentsService } from '../../../../api';
 import { ChatCitation } from '../../../../core/models/chat';
 import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -25,6 +26,7 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
     MatIconModule,
     MatProgressSpinnerModule,
     PdfViewer,
+    MatButtonModule,
   ],
 })
 export class ChatCitationsDetail {
@@ -69,7 +71,6 @@ export class ChatCitationsDetail {
   );
 
   private readonly cachedFiles = new Map<string, Blob>();
-  private readonly downloading = signal(new Set<string>());
 
   constructor() {
     effect(() => {
@@ -101,32 +102,6 @@ export class ChatCitationsDetail {
     this.selectedCitationIndex.set(index);
   }
 
-  downloadFile(documentId: string, filename: string): void {
-    if (this.downloading().has(documentId)) {
-      return;
-    }
-
-    this.downloading.update((ids) => new Set(ids).add(documentId));
-
-    this.documentsService
-      .getDocumentFileApiDocumentsDocIdFileGet(documentId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (blob) => {
-          this.saveFile(blob, filename);
-          this.cachedFiles.set(documentId, blob);
-          this.removeDownloading(documentId);
-        },
-        error: () => {
-          this.removeDownloading(documentId);
-        },
-      });
-  }
-
-  isDownloading(documentId: string): boolean {
-    return this.downloading().has(documentId);
-  }
-
   private loadFile(documentId: string): void {
     const cached = this.cachedFiles.get(documentId);
 
@@ -154,24 +129,5 @@ export class ChatCitationsDetail {
           this.fileError.set(true);
         },
       });
-  }
-
-  private removeDownloading(documentId: string): void {
-    this.downloading.update((ids) => {
-      const next = new Set(ids);
-      next.delete(documentId);
-      return next;
-    });
-  }
-
-  private saveFile(blob: Blob, filename: string): void {
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-
-    URL.revokeObjectURL(url);
   }
 }

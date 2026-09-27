@@ -33,10 +33,8 @@ export class ChatCitations {
     this.dialog.open(ChatCitationsDetail, {
       data: this.citations(),
       ariaLabel: 'Dettaglio delle citazioni',
-      width: '95vw',
-      height: '90vh',
-      maxWidth: '1400px',
-      maxHeight: '90vh',
+      width: '95dvw',
+      height: '95dvh',
       panelClass: 'chat-citations-dialog',
     });
   }
