@@ -11,8 +11,8 @@
     </button>
   </header>
 
-  <div class="min-h-0 gap-3 p-3 overflow flex flex-1">
-    <aside class="min-h-0 gap-2 flex flex-col overflow-y-auto">
+  <div class="citations-layout min-h-0 gap-3 p-3 overflow flex flex-1">
+    <aside class="documents-sidebar min-h-0 gap-2 flex flex-col overflow-y-auto">
       <p
         class="m-0 px-2 text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase"
       >
@@ -64,16 +64,33 @@
     >
       @if (selectedFile(); as file) {
         <header
-          class="px-4 py-3 gap-2 flex shrink-0 items-center border-b border-[var(--sys-outline)]"
+          class="document-toolbar px-4 py-3 gap-2 flex shrink-0 items-center border-b border-[var(--sys-outline)]"
         >
+          <div class="mobile-document-select">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <mat-label>Documento</mat-label>
+              <mat-select
+                [value]="selectedFileId()"
+                (selectionChange)="selectFile($event.value)"
+                aria-label="Seleziona documento"
+              >
+                @for (option of files(); track option.documentId) {
+                  <mat-option [value]="option.documentId">
+                    {{ option.filename }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
           <p
-            class="m-0 text-sm font-semibold truncate text-[var(--sys-on-surface)]"
+            class="document-title m-0 text-sm font-semibold truncate text-[var(--sys-on-surface)]"
             [title]="file.filename"
           >
             {{ file.filename }}
           </p>
 
-          <div class="gap-2 flex overflow-x-auto">
+          <div class="citation-selector gap-2 flex overflow-x-auto">
             @for (citation of file.citations; track $index) {
               <button
                 type="button"
