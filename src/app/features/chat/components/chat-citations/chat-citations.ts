@@ -1,13 +1,13 @@
 import { Component, computed, input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 import { ChatCitation } from '../../../../core/models/chat';
+import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 
 @Component({
   selector: 'app-chat-citations',
   templateUrl: './chat-citations.html',
   styleUrl: './chat-citations.scss',
-  imports: [MatTooltipModule],
+  imports: [MatTooltipModule, GetFileExtension],
 })
 export class ChatCitations {
   readonly citations = input<ChatCitation[]>([]);
@@ -19,15 +19,4 @@ export class ChatCitations {
   readonly additionalCitationsCount = computed(() =>
     Math.max(this.citations().length - 2, 0),
   );
-
-  getFileExtension(filename: string): string {
-    const name = filename.trim();
-    const lastDot = name.lastIndexOf('.');
-
-    if (lastDot <= 0 || lastDot === name.length - 1) {
-      return 'FILE';
-    }
-
-    return name.slice(lastDot + 1).toUpperCase();
-  }
 }

@@ -69,7 +69,7 @@
     </div>
 
     @if (isAssistant() && message().citations?.length) {
-      <app-chat-citations [citations]="message().citations ?? []"></app-chat-citations>
+      <app-chat-citations [citations]="message().citations ?? []" />
     }
   </div>
 </article>
