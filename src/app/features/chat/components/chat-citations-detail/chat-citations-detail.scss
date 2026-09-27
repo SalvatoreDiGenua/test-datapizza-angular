@@ -2,3 +2,42 @@
   display: block;
   height: 100%;
 }
+
+.mobile-document-select {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .citations-layout {
+    gap: 0;
+    padding: 0.5rem;
+  }
+
+  .documents-sidebar {
+    display: none;
+  }
+
+  .document-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .mobile-document-select {
+    display: block;
+    width: 100%;
+  }
+
+  .mobile-document-select mat-form-field {
+    width: 100%;
+  }
+
+  .document-title {
+    display: none;
+  }
+
+  .citation-selector {
+    width: 100%;
+    padding-bottom: 0.125rem;
+  }
+}
