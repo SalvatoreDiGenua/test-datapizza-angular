@@ -24,10 +24,8 @@
       @for (file of files(); track file.documentId) {
         <button
           type="button"
-          class="flex items-center gap-3 rounded-xl border p-3 text-left transition-colors"
+          class="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-left transition-colors dark:border-slate-700"
           [class.border-primary]="selectedFileId() === file.documentId"
-          [class.bg-primary/5]="selectedFileId() === file.documentId"
-          [class.border-[var(--sys-outline)]]="selectedFileId() !== file.documentId"
           [attr.aria-pressed]="selectedFileId() === file.documentId"
           (click)="selectFile(file.documentId)"
         >
@@ -76,10 +74,8 @@
               @for (citation of file.citations; track $index) {
                 <button
                   type="button"
-                  class="shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors"
+                  class="shrink-0 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium transition-colors dark:border-slate-700"
                   [class.border-primary]="selectedCitationIndex() === $index"
-                  [class.bg-primary/10]="selectedCitationIndex() === $index"
-                  [class.border-[var(--sys-outline)]]="selectedCitationIndex() !== $index"
                   [attr.aria-pressed]="selectedCitationIndex() === $index"
                   (click)="selectCitation($index)"
                 >
