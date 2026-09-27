@@ -7,6 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -22,6 +23,7 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
   styleUrl: './chat-citations-detail.scss',
   imports: [
     GetFileExtension,
+    MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     PdfViewer,
