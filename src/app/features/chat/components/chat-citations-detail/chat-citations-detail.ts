@@ -7,6 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -15,7 +16,6 @@ import { DocumentsService } from '../../../../api';
 import { ChatCitation } from '../../../../core/models/chat';
 import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -23,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './chat-citations-detail.scss',
   imports: [
     GetFileExtension,
+    MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     PdfViewer,

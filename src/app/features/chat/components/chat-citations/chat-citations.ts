@@ -34,6 +34,7 @@ export class ChatCitations {
       data: this.citations(),
       ariaLabel: 'Dettaglio delle citazioni',
       width: '95dvw',
+      minWidth: '95dvw',
       height: '95dvh',
       panelClass: 'chat-citations-dialog',
     });

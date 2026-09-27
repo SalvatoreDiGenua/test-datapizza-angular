@@ -11,7 +11,7 @@
     </button>
   </header>
 
-  <div class="min-h-0 gap-3 p-3 flex flex-1 overflow">
+  <div class="min-h-0 gap-3 p-3 overflow flex flex-1">
     <aside class="min-h-0 gap-2 flex flex-col overflow-y-auto">
       <p
         class="m-0 px-2 text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase"
@@ -20,15 +20,15 @@
       </p>
 
       @for (file of files(); track file.documentId) {
-        <div
-          class="gap-3 rounded-xl border-slate-200 p-3 dark:border-slate-700 flex items-center border transition-colors"
-          [class.border-primary]="selectedFileId() === file.documentId"
+        <button
+          matButton
+          type="button"
+          class="!min-h-0 !rounded-xl !border-slate-200 !p-3 dark:!border-slate-700 !h-auto !w-full !justify-start !border !text-left"
+          [class.border-primary!]="selectedFileId() === file.documentId"
+          [attr.aria-pressed]="selectedFileId() === file.documentId"
+          (click)="selectFile(file.documentId)"
         >
-          <button
-            matButton
-            [attr.aria-pressed]="selectedFileId() === file.documentId"
-            (click)="selectFile(file.documentId)"
-          >
+          <div class="gap-2 align-center flex">
             <span
               class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
               aria-hidden="true"
@@ -36,20 +36,22 @@
               {{ file.filename | getFileExtension }}
             </span>
 
-            <span class="min-w-0 flex-1">
+            <span class="min-w-0 grid">
               <span
                 class="text-sm font-semibold block truncate text-[var(--sys-on-surface)]"
                 [title]="file.filename"
               >
                 {{ file.filename }}
               </span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 block">
+              <span
+                class="text-xs text-slate-500 dark:text-slate-400 block truncate"
+              >
                 {{ file.citations.length }}
                 {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
               </span>
             </span>
-          </button>
-        </div>
+          </div>
+        </button>
       } @empty {
         <p class="py-8 text-sm text-slate-500 dark:text-slate-400 text-center">
           Nessuna citazione disponibile.
@@ -58,7 +60,7 @@
     </aside>
 
     <section
-      class="min-h-0 rounded-xl flex flex-col grow overflow-hidden border border-[var(--sys-outline)]"
+      class="min-h-0 rounded-xl flex grow flex-col overflow-hidden border border-[var(--sys-outline)]"
     >
       @if (selectedFile(); as file) {
         <header class="px-4 py-3 shrink-0 border-b border-[var(--sys-outline)]">
