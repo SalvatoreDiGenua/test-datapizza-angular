@@ -17,13 +17,17 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class ChatComposer {
   readonly disabled = input(false);
+  readonly canCompose = input(true);
   readonly sendMessage = output<string>();
   readonly cancelMessage = output<void>();
 
   readonly draft = signal('');
 
   readonly canSend = computed(
-    () => !this.disabled() && this.draft().trim().length > 0,
+    () =>
+      this.canCompose() &&
+      !this.disabled() &&
+      this.draft().trim().length > 0,
   );
 
   updateDraft(event: Event): void {
@@ -43,7 +47,7 @@ export class ChatComposer {
   submit(): void {
     const content = this.draft().trim();
 
-    if (!content || this.disabled()) {
+    if (!content || !this.canCompose() || this.disabled()) {
       return;
     }
 
