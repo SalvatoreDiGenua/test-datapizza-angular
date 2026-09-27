@@ -18,16 +18,18 @@
       [disabled]="isUploading() || isLoading()"
       (click)="inputFile.click()"
     >
-      @if (isUploading()) {
-        <mat-spinner diameter="18" />
-        <span>Caricamento...</span>
-      } @else {
-        <mat-icon>upload_file</mat-icon>
-      }
+      <div class="gap-2 flex items-center">
+        @if (isUploading()) {
+          <mat-spinner diameter="18" />
+          <span>Caricamento...</span>
+        } @else {
+          <mat-icon>upload_file</mat-icon>
+        }
 
-      @if (!isUploading()) {
-        <span>Carica PDF</span>
-      }
+        @if (!isUploading()) {
+          <span>Carica PDF</span>
+        }
+      </div>
     </button>
   </header>
 
