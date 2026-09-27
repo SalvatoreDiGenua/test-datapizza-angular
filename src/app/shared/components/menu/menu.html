@@ -1,23 +1,39 @@
-<mat-action-list>
-  <a
-    mat-list-item
-    [routerLink]="['chat']"
-    [relativeTo]="route"
-    routerLinkActive="border-l-4 border-transparent border-l-[var(--sys-primary)]"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
-    Nuova chat
-  </a>
+<nav class="menu" aria-label="Navigazione principale">
+  <div class="menu__label">Workspace</div>
 
-  <mat-divider />
+  <div class="menu__items">
+    <a
+      class="menu__item"
+      [routerLink]="['chat']"
+      [relativeTo]="route"
+      routerLinkActive="menu__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span class="menu__icon" aria-hidden="true">
+        <mat-icon>add_comment</mat-icon>
+      </span>
 
-  <a
-    mat-list-item
-    [routerLink]="['documents']"
-    [relativeTo]="route"
-    routerLinkActive="border-l-4 border-transparent border-l-[var(--sys-primary)]"
-    [routerLinkActiveOptions]="{ exact: true }"
-  >
-    Documenti
-  </a>
-</mat-action-list>
+      <span class="menu__content">
+        <span class="menu__title">Nuova chat</span>
+        <span class="menu__description">Inizia una conversazione</span>
+      </span>
+    </a>
+
+    <a
+      class="menu__item"
+      [routerLink]="['documents']"
+      [relativeTo]="route"
+      routerLinkActive="menu__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <span class="menu__icon" aria-hidden="true">
+        <mat-icon>description</mat-icon>
+      </span>
+
+      <span class="menu__content">
+        <span class="menu__title">Documenti</span>
+        <span class="menu__description">Gestisci i PDF disponibili</span>
+      </span>
+    </a>
+  </div>
+</nav>
