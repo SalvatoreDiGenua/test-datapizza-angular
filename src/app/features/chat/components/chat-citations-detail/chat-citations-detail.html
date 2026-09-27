@@ -93,7 +93,8 @@
             <app-pdf-viewer
               [src]="$any(pdfBlob())"
               [page]="selectedCitation()?.page_number ?? 1"
-              [highlightText]="selectedCitation()?.text_quote ?? null"
+              [highlights]="citationHighlights()"
+              [highlightText]="citationHighlights().length ? null : (selectedCitation()?.text_quote ?? null)"
               height="100%"
             ></app-pdf-viewer>
           </div>
