@@ -1,0 +1,26 @@
+@if (citations().length) {
+  <div
+    class="mt-2 flex items-center pl-1"
+    aria-label="Citazioni della risposta"
+  >
+    @for (citation of visibleCitations(); track citation.document_id + citation.page_number + citation.filename) {
+      <span
+        class="-mr-1.5 flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-[var(--sys-surface)] bg-primary text-[10px] font-bold uppercase tracking-tight text-on-primary shadow-sm"
+        [matTooltip]="citation.filename"
+        [attr.aria-label]="'Citazione: ' + citation.filename"
+      >
+        {{ getFileExtension(citation.filename) }}
+      </span>
+    }
+
+    @if (hasMoreCitations()) {
+      <span
+        class="-mr-1.5 flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-[var(--sys-surface)] bg-slate-200 text-xs font-bold text-slate-700 shadow-sm dark:bg-slate-700 dark:text-slate-100"
+        [matTooltip]="'Altre ' + additionalCitationsCount() + ' citazioni'"
+        [attr.aria-label]="'Altre ' + additionalCitationsCount() + ' citazioni'"
+      >
+        +
+      </span>
+    }
+  </div>
+}
