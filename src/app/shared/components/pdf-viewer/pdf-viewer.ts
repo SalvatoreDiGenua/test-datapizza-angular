@@ -109,6 +109,18 @@ export class PdfViewer {
       );
     }
 
+    if (pageNumber === this.page()) {
+      const first = pageHighlights[0];
+      const normalized = this.toNormalizedHighlight(first, pageNumber);
+
+      if (normalized) {
+        await this.pdfViewerService.scrollPageIntoView(pageNumber, {
+          top: `${Math.max(0, Math.min(100, normalized.y * 100 - 8))}%`,
+          left: `${Math.max(0, Math.min(100, normalized.x * 100 - 8))}%`,
+        });
+      }
+    }
+
     this.appliedHighlightPages.update((pages) => {
       const next = new Set(pages);
       next.add(pageNumber);
@@ -124,8 +136,6 @@ export class PdfViewer {
       return highlight;
     }
 
-    // rects_in uses x/y/width/height in inches, measured from the top-left.
-    // PDF.js exposes the physical page size in PDF points (72 points per inch).
     const pdfViewerApplication = (globalThis as { PDFViewerApplication?: any })
       .PDFViewerApplication;
     const pageView = pdfViewerApplication?.pdfViewer?.getPageView(
