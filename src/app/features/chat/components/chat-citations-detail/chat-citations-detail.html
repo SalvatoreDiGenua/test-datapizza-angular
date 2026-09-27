@@ -1,0 +1,73 @@
+<section class="flex max-h-[85vh] flex-col">
+  <header
+    class="flex items-center justify-between gap-4 border-b border-[var(--sys-outline)] px-5 py-4"
+  >
+    <div class="min-w-0">
+      <p class="m-0 text-xs font-semibold uppercase tracking-wider text-primary">
+        Citazioni
+      </p>
+      <h2 class="m-0 truncate text-lg font-semibold text-[var(--sys-on-surface)]">
+        File citati
+      </h2>
+    </div>
+
+    <button
+      type="button"
+      class="flex size-9 shrink-0 items-center justify-center rounded-full text-[var(--sys-on-surface)] hover:bg-black/5 dark:hover:bg-white/10"
+      aria-label="Chiudi"
+      (click)="close()"
+    >
+      <mat-icon fontIcon="close" aria-hidden="true"></mat-icon>
+    </button>
+  </header>
+
+  <div class="overflow-y-auto px-4 py-3">
+    @for (file of files(); track file.documentId) {
+      <article
+        class="mb-2 flex items-center gap-3 rounded-xl border border-[var(--sys-outline)] p-3 last:mb-0"
+      >
+        <div
+          class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold uppercase text-primary"
+          aria-hidden="true"
+        >
+          {{ file.filename | getFileExtension }}
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <p
+            class="m-0 truncate text-sm font-semibold text-[var(--sys-on-surface)]"
+            [title]="file.filename"
+          >
+            {{ file.filename }}
+          </p>
+          <p class="m-0 text-xs text-slate-500 dark:text-slate-400">
+            {{ file.citations.length }}
+            {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary disabled:cursor-wait disabled:opacity-60"
+          [disabled]="isDownloading(file.documentId)"
+          [attr.aria-label]="'Scarica ' + file.filename"
+          (click)="downloadFile(file.documentId, file.filename)"
+        >
+          @if (isDownloading(file.documentId)) {
+            <mat-spinner
+              class="!size-5"
+              diameter="20"
+              aria-label="Download in corso"
+            ></mat-spinner>
+          } @else {
+            <mat-icon fontIcon="download" aria-hidden="true"></mat-icon>
+          }
+        </button>
+      </article>
+    } @empty {
+      <p class="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+        Nessuna citazione disponibile.
+      </p>
+    }
+  </div>
+</section>
