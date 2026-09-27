@@ -19,6 +19,7 @@ export interface PdfViewerHighlight {
   color?: [number, number, number];
   opacity?: number;
   thickness?: number;
+  unit?: 'normalized' | 'inches';
 }
 
 @Component({
@@ -89,16 +90,22 @@ export class PdfViewer {
     }
 
     for (const highlight of pageHighlights) {
+      const normalized = this.toNormalizedHighlight(highlight, pageNumber);
+
+      if (!normalized) {
+        continue;
+      }
+
       await this.pdfViewerService.addHighlightToAnnotationLayer(
-        highlight.color ?? [255, 220, 0],
+        normalized.color ?? [255, 220, 0],
         pageNumber - 1,
-        `${highlight.x * 100}%`,
-        `${(1 - highlight.y - highlight.height) * 100}%`,
-        `${(highlight.x + highlight.width) * 100}%`,
-        `${(1 - highlight.y) * 100}%`,
-        highlight.thickness ?? 12,
+        `${normalized.x * 100}%`,
+        `${(1 - normalized.y - normalized.height) * 100}%`,
+        `${(normalized.x + normalized.width) * 100}%`,
+        `${(1 - normalized.y) * 100}%`,
+        normalized.thickness ?? 12,
         0,
-        highlight.opacity ?? 0.5,
+        normalized.opacity ?? 0.5,
       );
     }
 
@@ -107,5 +114,46 @@ export class PdfViewer {
       next.add(pageNumber);
       return next;
     });
+  }
+
+  private toNormalizedHighlight(
+    highlight: PdfViewerHighlight,
+    pageNumber: number,
+  ): PdfViewerHighlight | null {
+    if (highlight.unit !== 'inches') {
+      return highlight;
+    }
+
+    // rects_in uses x/y/width/height in inches, measured from the top-left.
+    // PDF.js exposes the physical page size in PDF points (72 points per inch).
+    const pdfViewerApplication = (globalThis as { PDFViewerApplication?: any })
+      .PDFViewerApplication;
+    const pageView = pdfViewerApplication?.pdfViewer?.getPageView(
+      pageNumber - 1,
+    );
+    const viewBox = pageView?.viewport?.viewBox as
+      | [number, number, number, number]
+      | undefined;
+
+    if (!viewBox) {
+      return null;
+    }
+
+    const pageWidthPoints = Math.abs(viewBox[2] - viewBox[0]);
+    const pageHeightPoints = Math.abs(viewBox[3] - viewBox[1]);
+    const pointsPerInch = 72;
+
+    if (!pageWidthPoints || !pageHeightPoints) {
+      return null;
+    }
+
+    return {
+      ...highlight,
+      x: (highlight.x * pointsPerInch) / pageWidthPoints,
+      y: (highlight.y * pointsPerInch) / pageHeightPoints,
+      width: (highlight.width * pointsPerInch) / pageWidthPoints,
+      height: (highlight.height * pointsPerInch) / pageHeightPoints,
+      unit: 'normalized',
+    };
   }
 }
