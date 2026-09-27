@@ -89,34 +89,41 @@ export class PdfViewer {
       return;
     }
 
-    for (const highlight of pageHighlights) {
-      const normalized = this.toNormalizedHighlight(highlight, pageNumber);
+    let applied = false;
 
-      if (!normalized) {
+    for (const highlight of pageHighlights) {
+      const coordinates = this.toPdfCoordinates(highlight, pageNumber);
+
+      if (!coordinates) {
         continue;
       }
 
       await this.pdfViewerService.addHighlightToAnnotationLayer(
-        normalized.color ?? [255, 220, 0],
+        highlight.color ?? [255, 220, 0],
         pageNumber - 1,
-        `${normalized.x * 100}%`,
-        `${(1 - normalized.y - normalized.height) * 100}%`,
-        `${(normalized.x + normalized.width) * 100}%`,
-        `${(1 - normalized.y) * 100}%`,
-        normalized.thickness ?? 12,
+        coordinates.left,
+        coordinates.bottom,
+        coordinates.right,
+        coordinates.top,
+        highlight.thickness ?? 10,
         0,
-        normalized.opacity ?? 0.5,
+        highlight.opacity ?? 0.45,
       );
+
+      applied = true;
+    }
+
+    if (!applied) {
+      return;
     }
 
     if (pageNumber === this.page()) {
-      const first = pageHighlights[0];
-      const normalized = this.toNormalizedHighlight(first, pageNumber);
+      const first = this.toNormalizedHighlight(pageHighlights[0], pageNumber);
 
-      if (normalized) {
-        await this.pdfViewerService.scrollPageIntoView(pageNumber, {
-          top: `${Math.max(0, Math.min(100, normalized.y * 100 - 8))}%`,
-          left: `${Math.max(0, Math.min(100, normalized.x * 100 - 8))}%`,
+      if (first) {
+        this.pdfViewerService.scrollPageIntoView(pageNumber, {
+          top: `${Math.max(0, Math.min(100, first.y * 100 - 8))}%`,
+          left: `${Math.max(0, Math.min(100, first.x * 100 - 8))}%`,
         });
       }
     }
@@ -128,6 +135,52 @@ export class PdfViewer {
     });
   }
 
+  private toPdfCoordinates(
+    highlight: PdfViewerHighlight,
+    pageNumber: number,
+  ): {
+    left: number;
+    bottom: number;
+    right: number;
+    top: number;
+  } | null {
+    if (highlight.unit !== 'inches') {
+      return null;
+    }
+
+    const pageView = this.getPageView(pageNumber);
+
+    if (!pageView?.pdfPage?.view) {
+      return null;
+    }
+
+    const [, bottomDim, , topDim] = pageView.pdfPage.view as [
+      number,
+      number,
+      number,
+      number,
+    ];
+    const pageHeightPoints = Math.abs(topDim - bottomDim);
+    const pointsPerInch = 72;
+
+    if (!pageHeightPoints) {
+      return null;
+    }
+
+    const left = highlight.x * pointsPerInch;
+    const right = (highlight.x + highlight.width) * pointsPerInch;
+    const top = pageHeightPoints - highlight.y * pointsPerInch;
+    const bottom =
+      pageHeightPoints - (highlight.y + highlight.height) * pointsPerInch;
+
+    return {
+      left,
+      bottom,
+      right,
+      top,
+    };
+  }
+
   private toNormalizedHighlight(
     highlight: PdfViewerHighlight,
     pageNumber: number,
@@ -136,21 +189,20 @@ export class PdfViewer {
       return highlight;
     }
 
-    const pdfViewerApplication = (globalThis as { PDFViewerApplication?: any })
-      .PDFViewerApplication;
-    const pageView = pdfViewerApplication?.pdfViewer?.getPageView(
-      pageNumber - 1,
-    );
-    const viewBox = pageView?.viewport?.viewBox as
-      | [number, number, number, number]
-      | undefined;
+    const pageView = this.getPageView(pageNumber);
 
-    if (!viewBox) {
+    if (!pageView?.pdfPage?.view) {
       return null;
     }
 
-    const pageWidthPoints = Math.abs(viewBox[2] - viewBox[0]);
-    const pageHeightPoints = Math.abs(viewBox[3] - viewBox[1]);
+    const [, bottomDim, rightDim, topDim] = pageView.pdfPage.view as [
+      number,
+      number,
+      number,
+      number,
+    ];
+    const pageWidthPoints = Math.abs(rightDim - (pageView.pdfPage.view as number[])[0]);
+    const pageHeightPoints = Math.abs(topDim - bottomDim);
     const pointsPerInch = 72;
 
     if (!pageWidthPoints || !pageHeightPoints) {
@@ -165,5 +217,13 @@ export class PdfViewer {
       height: (highlight.height * pointsPerInch) / pageHeightPoints,
       unit: 'normalized',
     };
+  }
+
+  private getPageView(pageNumber: number): any | null {
+    const pdfViewerApplication = (
+      globalThis as { PDFViewerApplication?: any }
+    ).PDFViewerApplication;
+
+    return pdfViewerApplication?.pdfViewer?.getPageView(pageNumber - 1) ?? null;
   }
 }
