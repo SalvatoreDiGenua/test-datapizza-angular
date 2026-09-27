@@ -63,7 +63,9 @@
       class="min-h-0 rounded-xl flex grow flex-col overflow-hidden border border-[var(--sys-outline)]"
     >
       @if (selectedFile(); as file) {
-        <header class="px-4 py-3 shrink-0 border-b border-[var(--sys-outline)]">
+        <header
+          class="px-4 py-3 gap-2 flex shrink-0 items-center border-b border-[var(--sys-outline)]"
+        >
           <p
             class="m-0 text-sm font-semibold truncate text-[var(--sys-on-surface)]"
             [title]="file.filename"
@@ -71,21 +73,19 @@
             {{ file.filename }}
           </p>
 
-          @if (file.citations.length > 1) {
-            <div class="mt-2 gap-2 pb-1 flex overflow-x-auto">
-              @for (citation of file.citations; track $index) {
-                <button
-                  type="button"
-                  class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors"
-                  [class.border-primary]="selectedCitationIndex() === $index"
-                  [attr.aria-pressed]="selectedCitationIndex() === $index"
-                  (click)="selectCitation($index)"
-                >
-                  Pagina {{ citation.page_number }}
-                </button>
-              }
-            </div>
-          }
+          <div class="gap-2 flex overflow-x-auto">
+            @for (citation of file.citations; track $index) {
+              <button
+                type="button"
+                class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors"
+                [class.border-primary]="selectedCitationIndex() === $index"
+                [attr.aria-pressed]="selectedCitationIndex() === $index"
+                (click)="selectCitation($index)"
+              >
+                Pagina {{ citation.page_number }}
+              </button>
+            }
+          </div>
         </header>
 
         @if (isSelectedFilePdf() && pdfBlob()) {
@@ -94,7 +94,11 @@
               [src]="$any(pdfBlob())"
               [page]="selectedCitation()?.page_number ?? 1"
               [highlights]="citationHighlights()"
-              [highlightText]="citationHighlights().length ? null : (selectedCitation()?.text_quote ?? null)"
+              [highlightText]="
+                citationHighlights().length
+                  ? null
+                  : (selectedCitation()?.text_quote ?? null)
+              "
               height="100%"
             ></app-pdf-viewer>
           </div>
