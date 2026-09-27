@@ -1,14 +1,8 @@
-<section class="flex max-h-[85vh] flex-col">
-  <header
-    class="flex items-center justify-between gap-4 border-b border-[var(--sys-outline)] px-5 py-4"
-  >
+<section class="flex max-h-[90vh] min-h-0 flex-col">
+  <header class="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--sys-outline)] px-5 py-4">
     <div class="min-w-0">
-      <p class="m-0 text-xs font-semibold uppercase tracking-wider text-primary">
-        Citazioni
-      </p>
-      <h2 class="m-0 truncate text-lg font-semibold text-[var(--sys-on-surface)]">
-        File citati
-      </h2>
+      <p class="m-0 text-xs font-semibold uppercase tracking-wider text-primary">Citazioni</p>
+      <h2 class="m-0 truncate text-lg font-semibold text-[var(--sys-on-surface)]">File citati</h2>
     </div>
 
     <button
@@ -21,53 +15,115 @@
     </button>
   </header>
 
-  <div class="overflow-y-auto px-4 py-3">
-    @for (file of files(); track file.documentId) {
-      <article
-        class="mb-2 flex items-center gap-3 rounded-xl border border-[var(--sys-outline)] p-3 last:mb-0"
-      >
-        <div
-          class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold uppercase text-primary"
-          aria-hidden="true"
-        >
-          {{ file.filename | getFileExtension }}
-        </div>
+  <div class="grid min-h-0 flex-1 gap-3 overflow-hidden p-3 md:grid-cols-[18rem_minmax(0,1fr)]">
+    <aside class="flex min-h-0 flex-col gap-2 overflow-y-auto">
+      <p class="m-0 px-2 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        Documenti
+      </p>
 
-        <div class="min-w-0 flex-1">
-          <p
-            class="m-0 truncate text-sm font-semibold text-[var(--sys-on-surface)]"
-            [title]="file.filename"
-          >
-            {{ file.filename }}
-          </p>
-          <p class="m-0 text-xs text-slate-500 dark:text-slate-400">
-            {{ file.citations.length }}
-            {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
-          </p>
-        </div>
-
+      @for (file of files(); track file.documentId) {
         <button
           type="button"
-          class="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary disabled:cursor-wait disabled:opacity-60"
-          [disabled]="isDownloading(file.documentId)"
-          [attr.aria-label]="'Scarica ' + file.filename"
-          (click)="downloadFile(file.documentId, file.filename)"
+          class="flex items-center gap-3 rounded-xl border p-3 text-left transition-colors"
+          [class.border-primary]="selectedFileId() === file.documentId"
+          [class.bg-primary/5]="selectedFileId() === file.documentId"
+          [class.border-[var(--sys-outline)]]="selectedFileId() !== file.documentId"
+          [attr.aria-pressed]="selectedFileId() === file.documentId"
+          (click)="selectFile(file.documentId)"
         >
-          @if (isDownloading(file.documentId)) {
-            <mat-spinner
-              class="!size-5"
-              diameter="20"
-              aria-label="Download in corso"
-            ></mat-spinner>
-          } @else {
-            <mat-icon fontIcon="download" aria-hidden="true"></mat-icon>
-          }
+          <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold uppercase text-primary" aria-hidden="true">
+            {{ file.filename | getFileExtension }}
+          </span>
+
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-sm font-semibold text-[var(--sys-on-surface)]" [title]="file.filename">
+              {{ file.filename }}
+            </span>
+            <span class="block text-xs text-slate-500 dark:text-slate-400">
+              {{ file.citations.length }}
+              {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
+            </span>
+          </span>
+
+          <span
+            class="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary"
+            [attr.aria-label]="'Scarica ' + file.filename"
+            (click)="$event.stopPropagation(); downloadFile(file.documentId, file.filename)"
+          >
+            @if (isDownloading(file.documentId)) {
+              <mat-spinner class="!size-5" diameter="20" aria-label="Download in corso"></mat-spinner>
+            } @else {
+              <mat-icon fontIcon="download" aria-hidden="true"></mat-icon>
+            }
+          </span>
         </button>
-      </article>
-    } @empty {
-      <p class="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
-        Nessuna citazione disponibile.
-      </p>
-    }
+      } @empty {
+        <p class="py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+          Nessuna citazione disponibile.
+        </p>
+      }
+    </aside>
+
+    <section class="flex min-h-0 flex-col overflow-hidden rounded-xl border border-[var(--sys-outline)]">
+      @if (selectedFile(); as file) {
+        <header class="shrink-0 border-b border-[var(--sys-outline)] px-4 py-3">
+          <p class="m-0 truncate text-sm font-semibold text-[var(--sys-on-surface)]" [title]="file.filename">
+            {{ file.filename }}
+          </p>
+
+          @if (file.citations.length > 1) {
+            <div class="mt-2 flex gap-2 overflow-x-auto pb-1">
+              @for (citation of file.citations; track $index) {
+                <button
+                  type="button"
+                  class="shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors"
+                  [class.border-primary]="selectedCitationIndex() === $index"
+                  [class.bg-primary/10]="selectedCitationIndex() === $index"
+                  [class.border-[var(--sys-outline)]]="selectedCitationIndex() !== $index"
+                  [attr.aria-pressed]="selectedCitationIndex() === $index"
+                  (click)="selectCitation($index)"
+                >
+                  Pagina {{ citation.page_number }}
+                </button>
+              }
+            </div>
+          }
+        </header>
+
+        @if (isSelectedFilePdf() && pdfBlob(); as blob) {
+          <div class="min-h-0 flex-1">
+            <app-pdf-viewer
+              [src]="blob"
+              [page]="selectedCitation()?.page_number ?? 1"
+              [highlightText]="selectedCitation()?.text_quote ?? null"
+              height="100%"
+            ></app-pdf-viewer>
+          </div>
+        } @else if (loadingFile()) {
+          <div class="flex min-h-0 flex-1 items-center justify-center">
+            <mat-spinner diameter="36" aria-label="Caricamento documento"></mat-spinner>
+          </div>
+        } @else if (fileError()) {
+          <div class="flex min-h-0 flex-1 items-center justify-center px-6 text-center">
+            <p class="m-0 text-sm text-slate-500 dark:text-slate-400">
+              Non è stato possibile caricare il documento.
+            </p>
+          </div>
+        } @else if (!isSelectedFilePdf()) {
+          <div class="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-6 text-center">
+            <mat-icon fontIcon="description" class="text-4xl text-slate-400" aria-hidden="true"></mat-icon>
+            <p class="m-0 text-sm text-slate-500 dark:text-slate-400">
+              L'anteprima è disponibile per i file PDF.
+            </p>
+          </div>
+        }
+      } @else {
+        <div class="flex min-h-0 flex-1 items-center justify-center px-6 text-center">
+          <p class="m-0 text-sm text-slate-500 dark:text-slate-400">
+            Nessuna citazione disponibile.
+          </p>
+        </div>
+      }
+    </section>
   </div>
 </section>
