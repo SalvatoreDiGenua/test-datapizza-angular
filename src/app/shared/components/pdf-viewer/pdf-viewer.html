@@ -15,4 +15,7 @@
   [showZoomDropdown]="true"
   [showPresentationModeButton]="true"
   [showSecondaryToolbarButton]="true"
+  (pdfLoadingStarts)="onPdfLoadingStarts()"
+  (pdfLoaded)="onPdfLoaded()"
+  (annotationEditorLayerRendered)="onAnnotationEditorLayerRendered($event)"
 ></ngx-extended-pdf-viewer>
