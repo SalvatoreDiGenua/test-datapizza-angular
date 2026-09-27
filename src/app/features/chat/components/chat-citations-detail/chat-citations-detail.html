@@ -26,7 +26,7 @@
   </header>
 
   <div
-    class="min-h-0 gap-3 p-3 md:grid-cols-[18rem_minmax(0,1fr)] grid flex-1 overflow-hidden"
+    class="min-h-0 gap-3 p-3 grid grid-cols-1 md:grid-cols-[18rem_minmax(0,1fr)] flex-1 overflow-hidden"
   >
     <aside class="min-h-0 gap-2 flex flex-col overflow-y-auto">
       <p
@@ -36,40 +36,42 @@
       </p>
 
       @for (file of files(); track file.documentId) {
-        <button
-          type="button"
-          class="gap-3 rounded-xl border-slate-200 p-3 dark:border-slate-700 flex items-center border text-left transition-colors"
+        <div
+          class="gap-3 rounded-xl border-slate-200 p-3 dark:border-slate-700 flex items-center border transition-colors"
           [class.border-primary]="selectedFileId() === file.documentId"
-          [attr.aria-pressed]="selectedFileId() === file.documentId"
-          (click)="selectFile(file.documentId)"
         >
-          <span
-            class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
-            aria-hidden="true"
+          <button
+            type="button"
+            class="min-w-0 flex flex-1 items-center gap-3 text-left"
+            [attr.aria-pressed]="selectedFileId() === file.documentId"
+            (click)="selectFile(file.documentId)"
           >
-            {{ file.filename | getFileExtension }}
-          </span>
-
-          <span class="min-w-0 flex-1">
             <span
-              class="text-sm font-semibold block truncate text-[var(--sys-on-surface)]"
-              [title]="file.filename"
+              class="size-10 rounded-lg text-xs font-bold flex shrink-0 items-center justify-center bg-primary/10 text-primary uppercase"
+              aria-hidden="true"
             >
-              {{ file.filename }}
+              {{ file.filename | getFileExtension }}
             </span>
-            <span class="text-xs text-slate-500 dark:text-slate-400 block">
-              {{ file.citations.length }}
-              {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
+
+            <span class="min-w-0 flex-1">
+              <span
+                class="text-sm font-semibold block truncate text-[var(--sys-on-surface)]"
+                [title]="file.filename"
+              >
+                {{ file.filename }}
+              </span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 block">
+                {{ file.citations.length }}
+                {{ file.citations.length === 1 ? 'citazione' : 'citazioni' }}
+              </span>
             </span>
-          </span>
+          </button>
 
           <button
+            type="button"
             class="size-9 text-on-primary flex shrink-0 items-center justify-center rounded-full bg-primary"
             [attr.aria-label]="'Scarica ' + file.filename"
-            (click)="
-              $event.stopPropagation();
-              downloadFile(file.documentId, file.filename)
-            "
+            (click)="downloadFile(file.documentId, file.filename)"
           >
             @if (isDownloading(file.documentId)) {
               <mat-spinner
@@ -81,7 +83,7 @@
               <mat-icon fontIcon="download" aria-hidden="true"></mat-icon>
             }
           </button>
-        </button>
+        </div>
       } @empty {
         <p class="py-8 text-sm text-slate-500 dark:text-slate-400 text-center">
           Nessuna citazione disponibile.
