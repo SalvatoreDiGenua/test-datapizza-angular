@@ -166,7 +166,7 @@ export class ChatCitationsDetail {
         'body',
         false,
         {
-          httpHeaderAccept: 'aplication/pdf' as any,
+          httpHeaderAccept: 'application/pdf' as any,
         },
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
