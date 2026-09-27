@@ -1,12 +1,18 @@
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
 import { DocumentsService } from '../../../../api';
 import { ChatCitation } from '../../../../core/models/chat';
 import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
@@ -16,7 +22,12 @@ import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
   selector: 'app-chat-citations-detail',
   templateUrl: './chat-citations-detail.html',
   styleUrl: './chat-citations-detail.scss',
-  imports: [GetFileExtension, MatIconModule, MatProgressSpinnerModule, PdfViewer],
+  imports: [
+    GetFileExtension,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    PdfViewer,
+  ],
 })
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
@@ -49,14 +60,12 @@ export class ChatCitationsDetail {
 
   readonly selectedFile = computed(
     () =>
-      this.files().find(
-        (file) => file.documentId === this.selectedFileId(),
-      ) ?? null,
+      this.files().find((file) => file.documentId === this.selectedFileId()) ??
+      null,
   );
 
   readonly selectedCitation = computed(
-    () =>
-      this.selectedFile()?.citations[this.selectedCitationIndex()] ?? null,
+    () => this.selectedFile()?.citations[this.selectedCitationIndex()] ?? null,
   );
 
   readonly isSelectedFilePdf = computed(
@@ -104,7 +113,7 @@ export class ChatCitationsDetail {
     this.downloading.update((ids) => new Set(ids).add(documentId));
 
     this.documentsService
-      .getDocumentApiDocumentsDocIdGet(documentId)
+      .getDocumentFileApiDocumentsDocIdFileGet(documentId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {
@@ -136,7 +145,7 @@ export class ChatCitationsDetail {
     this.loadingFile.set(true);
 
     this.documentsService
-      .getDocumentApiDocumentsDocIdGet(documentId)
+      .getDocumentFileApiDocumentsDocIdFileGet(documentId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (blob) => {

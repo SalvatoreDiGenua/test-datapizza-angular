@@ -1,4 +1,10 @@
-import { Component, effect, input, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import {
   NgxExtendedPdfViewerModule,
   NgxExtendedPdfViewerService,
@@ -38,9 +44,9 @@ export class PdfViewer {
   private readonly pdfLoaded = signal(false);
   private readonly appliedHighlightPages = signal(new Set<number>());
 
-  constructor(
-    private readonly pdfViewerService: NgxExtendedPdfViewerService,
-  ) {
+  private readonly pdfViewerService = inject(NgxExtendedPdfViewerService);
+
+  constructor() {
     effect(() => {
       const text = this.highlightText()?.trim();
 
