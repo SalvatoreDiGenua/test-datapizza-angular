@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, effect, inject, signal } from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
@@ -7,16 +7,16 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { ChatCitation } from '../../../../core/models/chat';
-import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 import { DocumentsService } from '../../../../api';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChatCitation } from '../../../../core/models/chat';
+import { PdfViewer } from '../../../../shared/components/pdf-viewer/pdf-viewer';
+import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 
 @Component({
   selector: 'app-chat-citations-detail',
   templateUrl: './chat-citations-detail.html',
   styleUrl: './chat-citations-detail.scss',
-  imports: [GetFileExtension, MatIconModule, MatProgressSpinnerModule],
+  imports: [GetFileExtension, MatIconModule, MatProgressSpinnerModule, PdfViewer],
 })
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
@@ -31,7 +31,6 @@ export class ChatCitationsDetail {
 
     for (const citation of this.citations) {
       const key = citation.document_id;
-
       files.set(key, [...(files.get(key) ?? []), citation]);
     }
 
@@ -42,10 +41,59 @@ export class ChatCitationsDetail {
     }));
   });
 
+  readonly selectedFileId = signal(this.citations[0]?.document_id ?? null);
+  readonly selectedCitationIndex = signal(0);
+  readonly pdfBlob = signal<Blob | null>(null);
+  readonly loadingFile = signal(false);
+  readonly fileError = signal(false);
+
+  readonly selectedFile = computed(
+    () =>
+      this.files().find(
+        (file) => file.documentId === this.selectedFileId(),
+      ) ?? null,
+  );
+
+  readonly selectedCitation = computed(
+    () =>
+      this.selectedFile()?.citations[this.selectedCitationIndex()] ?? null,
+  );
+
+  readonly isSelectedFilePdf = computed(
+    () => this.selectedFile()?.filename.toLowerCase().endsWith('.pdf') ?? false,
+  );
+
+  private readonly cachedFiles = new Map<string, Blob>();
   private readonly downloading = signal(new Set<string>());
+
+  constructor() {
+    effect(() => {
+      const file = this.selectedFile();
+
+      if (!file) {
+        this.pdfBlob.set(null);
+        return;
+      }
+
+      this.loadFile(file.documentId);
+    });
+  }
 
   close(): void {
     this.bottomSheetRef.dismiss();
+  }
+
+  selectFile(documentId: string): void {
+    if (documentId === this.selectedFileId()) {
+      return;
+    }
+
+    this.selectedCitationIndex.set(0);
+    this.selectedFileId.set(documentId);
+  }
+
+  selectCitation(index: number): void {
+    this.selectedCitationIndex.set(index);
   }
 
   downloadFile(documentId: string, filename: string): void {
@@ -61,6 +109,7 @@ export class ChatCitationsDetail {
       .subscribe({
         next: (blob) => {
           this.saveFile(blob, filename);
+          this.cachedFiles.set(documentId, blob);
           this.removeDownloading(documentId);
         },
         error: () => {
@@ -71,6 +120,35 @@ export class ChatCitationsDetail {
 
   isDownloading(documentId: string): boolean {
     return this.downloading().has(documentId);
+  }
+
+  private loadFile(documentId: string): void {
+    const cached = this.cachedFiles.get(documentId);
+
+    if (cached) {
+      this.pdfBlob.set(cached);
+      this.fileError.set(false);
+      return;
+    }
+
+    this.pdfBlob.set(null);
+    this.fileError.set(false);
+    this.loadingFile.set(true);
+
+    this.documentsService
+      .getDocumentApiDocumentsDocIdGet(documentId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob) => {
+          this.cachedFiles.set(documentId, blob);
+          this.pdfBlob.set(blob);
+          this.loadingFile.set(false);
+        },
+        error: () => {
+          this.loadingFile.set(false);
+          this.fileError.set(true);
+        },
+      });
   }
 
   private removeDownloading(documentId: string): void {
