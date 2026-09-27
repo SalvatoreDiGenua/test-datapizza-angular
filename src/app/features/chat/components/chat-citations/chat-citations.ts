@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ChatCitation } from '../../../../core/models/chat';
@@ -10,10 +10,10 @@ import { ChatCitationsDetail } from '../chat-citations-detail/chat-citations-det
   selector: 'app-chat-citations',
   templateUrl: './chat-citations.html',
   styleUrl: './chat-citations.scss',
-  imports: [MatBottomSheetModule, MatTooltipModule, GetFileExtension],
+  imports: [MatDialogModule, MatTooltipModule, GetFileExtension],
 })
 export class ChatCitations {
-  private readonly bottomSheet = inject(MatBottomSheet);
+  private readonly dialog = inject(MatDialog);
 
   readonly citations = input<ChatCitation[]>([]);
 
@@ -30,9 +30,14 @@ export class ChatCitations {
       return;
     }
 
-    this.bottomSheet.open(ChatCitationsDetail, {
+    this.dialog.open(ChatCitationsDetail, {
       data: this.citations(),
       ariaLabel: 'Dettaglio delle citazioni',
+      width: '95vw',
+      height: '90vh',
+      maxWidth: '1400px',
+      maxHeight: '90vh',
+      panelClass: 'chat-citations-dialog',
     });
   }
 }
