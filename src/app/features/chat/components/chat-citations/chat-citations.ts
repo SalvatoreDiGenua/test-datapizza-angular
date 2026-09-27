@@ -1,5 +1,4 @@
 import { Component, computed, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ChatCitation } from '../../../../core/models/chat';
@@ -8,7 +7,7 @@ import { ChatCitation } from '../../../../core/models/chat';
   selector: 'app-chat-citations',
   templateUrl: './chat-citations.html',
   styleUrl: './chat-citations.scss',
-  imports: [MatIconModule, MatTooltipModule],
+  imports: [MatTooltipModule],
 })
 export class ChatCitations {
   readonly citations = input<ChatCitation[]>([]);
