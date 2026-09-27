@@ -87,9 +87,6 @@ export class ChatCitationsDetail {
         }
 
         const [x, y, width, height] = rect;
-        const normalized = [x, y, width, height].every(
-          (value) => value >= 0 && value <= 1,
-        );
 
         return [
           {
@@ -98,7 +95,7 @@ export class ChatCitationsDetail {
             y,
             width,
             height,
-            unit: normalized ? 'normalized' : 'inches',
+            unit: 'inches',
             color: [255, 220, 0] as [number, number, number],
             opacity: 0.45,
             thickness: 10,
