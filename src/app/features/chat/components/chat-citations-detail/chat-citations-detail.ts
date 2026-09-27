@@ -10,6 +10,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { DocumentsService } from '../../../../api';
@@ -29,7 +31,9 @@ import { Auth } from '../../../../core/auth/auth';
     GetFileExtension,
     MatButtonModule,
     MatIconModule,
+    MatFormFieldModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
     PdfViewer,
   ],
 })
