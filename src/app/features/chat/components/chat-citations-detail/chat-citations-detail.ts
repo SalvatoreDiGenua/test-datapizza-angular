@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   MAT_BOTTOM_SHEET_DATA,
   MatBottomSheetRef,
@@ -40,7 +40,7 @@ export class ChatCitationsDetail {
     }));
   });
 
-  readonly downloading = new Set<string>();
+  private readonly downloading = signal(new Set<string>());
 
   close(): void {
     this.bottomSheetRef.dismiss();
@@ -51,23 +51,31 @@ export class ChatCitationsDetail {
       return;
     }
 
-    this.downloading.add(documentId);
+    this.downloading.update((ids) => new Set(ids).add(documentId));
 
     const url = `${environment.baseApiUrl}/api/documents/${encodeURIComponent(documentId)}/file`;
 
     this.http.get(url, { responseType: 'blob' }).subscribe({
       next: (blob) => {
         this.saveFile(blob, filename);
-        this.downloading.delete(documentId);
+        this.removeDownloading(documentId);
       },
       error: () => {
-        this.downloading.delete(documentId);
+        this.removeDownloading(documentId);
       },
     });
   }
 
   isDownloading(documentId: string): boolean {
-    return this.downloading.has(documentId);
+    return this.downloading().has(documentId);
+  }
+
+  private removeDownloading(documentId: string): void {
+    this.downloading.update((ids) => {
+      const next = new Set(ids);
+      next.delete(documentId);
+      return next;
+    });
   }
 
   private saveFile(blob: Blob, filename: string): void {
