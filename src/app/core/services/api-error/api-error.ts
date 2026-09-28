@@ -2,7 +2,8 @@ import { Service, signal } from '@angular/core';
 
 export interface ApiErrorState {
   status: number;
-  message: string;
+  technicalMessage: string;
+  userMessage: string;
   url: string;
 }
 

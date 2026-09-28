@@ -2,6 +2,10 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { ApiError } from '../../../services/api-error/api-error';
+import {
+  getApiErrorMessage,
+  getTechnicalErrorMessage,
+} from '../../../services/api-error/api-error-message';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const errors = inject(ApiError);
@@ -11,7 +15,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error instanceof HttpErrorResponse) {
         errors.report({
           status: error.status,
-          message: error.message || 'An unexpected HTTP error occurred.',
+          technicalMessage: getTechnicalErrorMessage(error),
+          userMessage: getApiErrorMessage(error),
           url: error.url ?? req.url,
         });
       }

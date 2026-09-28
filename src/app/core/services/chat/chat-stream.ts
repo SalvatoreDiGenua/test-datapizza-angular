@@ -1,6 +1,7 @@
 import { inject, Service } from '@angular/core';
 
 import { Configuration } from '../../../api';
+import { ApiHttpError } from '../api-error/api-http-error';
 import {
   ChatCitation,
   ChatStreamEvent,
@@ -14,22 +15,38 @@ export class ChatStreamService {
   async *streamChat(
     request: ChatStreamRequest,
   ): AsyncGenerator<ChatStreamEvent> {
-    const response = await fetch(`${this.configuration.basePath}/api/chat/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/x-ndjson',
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        query: request.query,
-        history: request.history,
-      }),
-      signal: request.signal,
-    });
+    let response: Response;
+
+    try {
+      response = await fetch(`${this.configuration.basePath}/api/chat/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/x-ndjson',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          query: request.query,
+          history: request.history,
+        }),
+        signal: request.signal,
+      });
+    } catch (error: unknown) {
+      if (isAbortError(error)) {
+        throw error;
+      }
+
+      throw new ApiHttpError(
+        0,
+        error instanceof Error ? error.message : 'Chat request failed.',
+      );
+    }
 
     if (!response.ok) {
-      throw new Error(`Chat request failed with status ${response.status}`);
+      throw new ApiHttpError(
+        response.status,
+        `Chat request failed with status ${response.status}`,
+      );
     }
 
     if (!response.body) {
@@ -168,6 +185,10 @@ function parseErrorEvent(
     type: 'error',
     message,
   };
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
 }
 
 function isChatCitation(value: unknown): value is ChatCitation {
