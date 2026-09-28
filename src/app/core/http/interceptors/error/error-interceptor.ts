@@ -1,27 +1,22 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { ApiError } from '../../../services/api-error/api-error';
-import {
-  getApiErrorMessage,
-  getTechnicalErrorMessage,
-} from '../../../services/api-error/api-error-message';
+import { ApiHttpError } from '../../../services/api-error/api-http-error';
+import { getTechnicalErrorMessage } from '../../../services/api-error/api-error-message';
 
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const errors = inject(ApiError);
-
-  return next(req).pipe(
+export const errorInterceptor: HttpInterceptorFn = (req, next) =>
+  next(req).pipe(
     catchError((error: unknown) => {
-      if (error instanceof HttpErrorResponse) {
-        errors.report({
-          status: error.status,
-          technicalMessage: getTechnicalErrorMessage(error),
-          userMessage: getApiErrorMessage(error),
-          url: error.url ?? req.url,
-        });
+      if (!(error instanceof HttpErrorResponse)) {
+        return throwError(() => error);
       }
 
-      return throwError(() => error);
+      return throwError(
+        () =>
+          new ApiHttpError(
+            error.status,
+            getTechnicalErrorMessage(error),
+            error.url ?? req.url,
+          ),
+      );
     }),
   );
-};
