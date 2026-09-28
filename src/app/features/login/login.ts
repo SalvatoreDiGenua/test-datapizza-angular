@@ -14,6 +14,7 @@ import {
 import { AuthService } from '../../api';
 import { Auth } from '../../core/auth/auth';
 import { getApiErrorMessage } from '../../core/services/api-error/api-error-message';
+import { SnackbarService } from '../../shared/services/snackbar';
 
 @Component({
   selector: 'app-login',
