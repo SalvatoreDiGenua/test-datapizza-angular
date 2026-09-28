@@ -90,10 +90,10 @@
           <div class="citation-selector gap-2 flex overflow-x-auto">
             @for (page of citationPages(); track page.pageNumber) {
               <button
-                matRipple
+                matButton
                 type="button"
-                class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors cursor-pointer"
-                [class.border-primary!]="selectedCitationPageIndex() === $index"
+                class="!min-h-0 !rounded-full !border-slate-200 !px-3 !py-1.5 !text-xs !font-medium dark:!border-slate-700 shrink-0 !border"
+                [class.!border-primary]="selectedCitationPageIndex() === $index"
                 [attr.aria-pressed]="selectedCitationPageIndex() === $index"
                 [attr.aria-label]="
                   'Pagina ' +
@@ -104,16 +104,17 @@
                 "
                 (click)="selectCitation($index)"
               >
-                <span class="gap-1.5 flex items-center">
-                  <span>Pagina {{ page.pageNumber }}</span>
-                  @if (page.citations.length > 1) {
-                    <span
-                      class="min-w-5 h-5 rounded-full bg-primary px-1.5 text-[10px] font-bold leading-5 text-on-primary"
-                      aria-hidden="true"
-                    >
-                      {{ page.citations.length }}
-                    </span>
-                  }
+                <span
+                  class="gap-1.5 flex items-center"
+                  [matBadge]="
+                    page.citations.length > 1 ? page.citations.length : null
+                  "
+                  matBadgeSize="small"
+                  matBadgePosition="above after"
+                  [matBadgeHidden]="page.citations.length <= 1"
+                  matBadgeDescription="Numero di citazioni"
+                >
+                  Pagina {{ page.pageNumber }}
                 </span>
               </button>
             }
