@@ -1,17 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ApiError } from './core/services/api-error/api-error';
-import { MatIconModule } from '@angular/material/icon';
-import { SnackbarService } from './shared/services/snackbar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatIconModule],
+  imports: [RouterOutlet],
   template: `
     <a class="skip-link" href="#main-content"> Skip to main content </a>
     <router-outlet />
@@ -43,19 +35,5 @@ import { SnackbarService } from './shared/services/snackbar';
       outline-offset: 2px;
     }
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App {
-  public readonly apiErrorService = inject(ApiError);
-  private readonly snackBarService = inject(SnackbarService);
-
-  constructor() {
-    effect(() => {
-      const error = this.apiErrorService.error();
-      if (!error?.userMessage) {
-        return;
-      }
-      this.snackBarService.error(error.userMessage);
-    });
-  }
-}
+export class App {}
