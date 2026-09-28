@@ -49,9 +49,16 @@
         class="h-14 rounded-xl text-lg w-full"
         ngxRequestLock
         (click)="login()"
-        [disabled]="userIdControl.invalid"
+        [disabled]="userIdControl.invalid || loading()"
       >
-        Entra
+        @if (loading()) {
+          <mat-spinner
+            diameter="24"
+            aria-label="Accesso in corso"
+          />
+        } @else {
+          Entra
+        }
       </button>
     </div>
   </div>
