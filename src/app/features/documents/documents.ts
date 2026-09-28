@@ -2,12 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   OnInit,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpEventType } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
@@ -49,7 +48,6 @@ import { Auth } from '../../core/auth/auth';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Documents implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(Auth);
   private readonly documentsService = inject(DocumentsService);
   private readonly snackbar = inject(SnackbarService);
@@ -58,9 +56,7 @@ export class Documents implements OnInit {
   private readonly loadRequestId = 'documents-load';
   readonly uploadRequestId = 'documents-upload';
 
-  readonly isLoading = computed(() =>
-    this.requestLockService.isPending(this.loadRequestId)(),
-  );
+  readonly isLoading = computed(() => this.documentsResource.isLoading());
 
   readonly isUploading = computed(() =>
     this.requestLockService.isPending(this.uploadRequestId)(),
@@ -70,7 +66,32 @@ export class Documents implements OnInit {
 
   readonly pageSize = signal(20);
   readonly pageIndex = signal(0);
-  readonly hasNextPage = signal(false);
+  readonly documentsResource = rxResource({
+    params: () => ({
+      limit: this.pageSize() + 1,
+      offset: this.pageIndex() * this.pageSize(),
+    }),
+    stream: ({ params }) =>
+      this.documentsService.listDocumentsApiDocumentsGet(
+        params.limit,
+        params.offset,
+        this.auth.user()?.id,
+        undefined,
+        undefined,
+        {
+          context: createRequestLockContext(this.loadRequestId),
+        },
+      ),
+  });
+
+  readonly dataSource = computed(
+    () => this.documentsResource.value()?.slice(0, this.pageSize()) ?? [],
+  );
+
+  readonly hasNextPage = computed(
+    () => (this.documentsResource.value()?.length ?? 0) > this.pageSize(),
+  );
+
   readonly paginationLength = computed(() => {
     const visibleItems =
       this.pageIndex() * this.pageSize() + this.dataSource().length;
@@ -84,51 +105,6 @@ export class Documents implements OnInit {
     'status',
     'upload_date',
   ];
-
-  readonly dataSource = signal<Document[]>([]);
-
-  ngOnInit(): void {
-    this.getFiles();
-  }
-
-  getFiles(requestId = this.loadRequestId, pageIndex = this.pageIndex()): void {
-    const limit = this.pageSize() + 1;
-    const offset = pageIndex * this.pageSize();
-
-    if (requestId === this.loadRequestId) {
-      this.pageIndex.set(pageIndex);
-    }
-
-    this.documentsService
-      .listDocumentsApiDocumentsGet(
-        limit,
-        offset,
-        this.auth.user()?.id,
-        undefined,
-        undefined,
-        {
-          context: createRequestLockContext(requestId),
-        },
-      )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data: Document[]) => {
-          const hasNext = data.length > this.pageSize();
-
-          this.hasNextPage.set(hasNext);
-          this.dataSource.set(
-            hasNext ? data.slice(0, this.pageSize()) : data,
-          );
-        },
-        error: () => {
-          this.uploadProgress.set(0);
-          this.snackbar.error(
-            'Non è stato possibile recuperare i documenti.',
-            'Caricamento fallito',
-          );
-        },
-      });
-  }
 
   uploadFiles(files: FileList): void {
     if (!files?.length || this.isUploading()) {
@@ -179,7 +155,7 @@ export class Documents implements OnInit {
           );
 
           this.pageIndex.set(0);
-          this.getFiles(this.uploadRequestId, 0);
+          this.documentsResource.reload();
         },
         error: () => {
           this.snackbar.error(
@@ -191,14 +167,8 @@ export class Documents implements OnInit {
   }
 
   onPageChange(event: PageEvent): void {
-    if (event.pageSize !== this.pageSize()) {
-      this.pageSize.set(event.pageSize);
-      this.pageIndex.set(0);
-      this.getFiles();
-      return;
-    }
-
-    this.getFiles(this.loadRequestId, event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    this.pageIndex.set(event.pageIndex);
   }
 
   onFileSelected(event: Event): void {
