@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  OnInit,
   inject,
   signal,
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpEventType } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,7 +47,7 @@ import { Auth } from '../../core/auth/auth';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Documents implements OnInit {
+export class Documents {
   private readonly auth = inject(Auth);
   private readonly documentsService = inject(DocumentsService);
   private readonly snackbar = inject(SnackbarService);
@@ -72,16 +72,26 @@ export class Documents implements OnInit {
       offset: this.pageIndex() * this.pageSize(),
     }),
     stream: ({ params }) =>
-      this.documentsService.listDocumentsApiDocumentsGet(
-        params.limit,
-        params.offset,
-        this.auth.user()?.id,
-        undefined,
-        undefined,
-        {
-          context: createRequestLockContext(this.loadRequestId),
-        },
-      ),
+      this.documentsService
+        .listDocumentsApiDocumentsGet(
+          params.limit,
+          params.offset,
+          this.auth.user()?.id,
+          undefined,
+          undefined,
+          {
+            context: createRequestLockContext(this.loadRequestId),
+          },
+        )
+        .pipe(
+          tap({
+            error: () =>
+              this.snackbar.error(
+                'Non è stato possibile recuperare i documenti.',
+                'Caricamento fallito',
+              ),
+          }),
+        ),
   });
 
   readonly dataSource = computed(
@@ -132,7 +142,6 @@ export class Documents implements OnInit {
           context: createRequestLockContext(this.uploadRequestId),
         },
       )
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (event) => {
           if (event.type === HttpEventType.UploadProgress && event.total) {
