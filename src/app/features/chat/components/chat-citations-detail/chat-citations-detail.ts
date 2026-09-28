@@ -62,7 +62,7 @@ export class ChatCitationsDetail {
   });
 
   readonly selectedFileId = signal(this.citations[0]?.document_id ?? null);
-  readonly selectedCitationIndex = signal(0);
+  readonly selectedCitationPageIndex = signal(0);
   readonly pdfBlob = signal<Blob | null>(null);
   readonly loadingFile = signal(false);
   readonly fileError = signal(false);
@@ -73,8 +73,28 @@ export class ChatCitationsDetail {
       null,
   );
 
+  readonly citationPages = computed(() => {
+    const pages = new Map<number, ChatCitation[]>();
+
+    for (const citation of this.selectedFile()?.citations ?? []) {
+      pages.set(citation.page_number, [
+        ...(pages.get(citation.page_number) ?? []),
+        citation,
+      ]);
+    }
+
+    return [...pages.entries()].map(([pageNumber, citations]) => ({
+      pageNumber,
+      citations,
+    }));
+  });
+
+  readonly selectedCitationPage = computed(
+    () => this.citationPages()[this.selectedCitationPageIndex()] ?? null,
+  );
+
   readonly selectedCitation = computed(
-    () => this.selectedFile()?.citations[this.selectedCitationIndex()] ?? null,
+    () => this.selectedCitationPage()?.citations[0] ?? null,
   );
 
   readonly isSelectedFilePdf = computed(
@@ -82,13 +102,9 @@ export class ChatCitationsDetail {
   );
 
   readonly citationHighlights = computed<PdfViewerHighlight[]>(() => {
-    const citation = this.selectedCitation();
+    const citations = this.selectedCitationPage()?.citations ?? [];
 
-    if (!citation?.bounding_regions?.length) {
-      return [];
-    }
-
-    return citation.bounding_regions.flatMap((region) =>
+    return citations.flatMap((citation) => citation.bounding_regions).flatMap((region) =>
       region.rects_in.flatMap((rect) => {
         if (
           rect.length !== 4 ||
@@ -140,12 +156,12 @@ export class ChatCitationsDetail {
       return;
     }
 
-    this.selectedCitationIndex.set(0);
+    this.selectedCitationPageIndex.set(0);
     this.selectedFileId.set(documentId);
   }
 
   selectCitation(index: number): void {
-    this.selectedCitationIndex.set(index);
+    this.selectedCitationPageIndex.set(index);
   }
 
   private loadFile(documentId: string): void {
