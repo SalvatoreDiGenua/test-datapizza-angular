@@ -10,12 +10,14 @@ import {
 import { ChatStreamService } from './chat-stream';
 import { ChatHistoryStore } from '../../../shared/services/chat-history-store';
 import { getApiErrorMessage } from '../api-error/api-error-message';
+import { SnackbarService } from '../../../shared/services/snackbar';
 
 @Service()
 export class ChatSession {
   private readonly chatService = inject(ChatService);
   private readonly chatStreamService = inject(ChatStreamService);
   private readonly chatHistoryStore = inject(ChatHistoryStore);
+  private readonly snackbar = inject(SnackbarService);
 
   private readonly pendingMessages = signal<ChatMessage[]>([]);
   private readonly pendingChatId = signal<string | undefined>(undefined);
@@ -136,12 +138,15 @@ export class ChatSession {
         return;
       }
 
+      const errorMessage = getApiErrorMessage(error);
+
       this.updateMessage(assistantMessage.id, {
-        content:
-          assistantText || getApiErrorMessage(error),
+        content: assistantText || errorMessage,
         status: 'error',
         citations,
       });
+
+      this.snackbar.error(errorMessage, 'Invio messaggio fallito');
     } finally {
       if (this.activeController === controller) {
         this.activeController = null;
