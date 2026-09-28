@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, throwError } from 'rxjs';
-import { ApiError } from '../../../services/api-error';
+import { ApiHttpError } from '../../../services/api-error/api-http-error';
 import { errorInterceptor } from './error-interceptor';
 
 describe('errorInterceptor', () => {
@@ -16,8 +16,7 @@ describe('errorInterceptor', () => {
     TestBed.configureTestingModule({});
   });
 
-  it('reports HTTP errors and rethrows the original error', async () => {
-    const apiError = TestBed.inject(ApiError);
+  it('normalizes HTTP errors and rethrows them as ApiHttpError', async () => {
     const error = new HttpErrorResponse({
       status: 401,
       statusText: 'Unauthorized',
@@ -26,19 +25,16 @@ describe('errorInterceptor', () => {
 
     const request = new HttpRequest('GET', '/api/profile');
 
-    await expect(
-      firstValueFrom(interceptor(request, () => throwError(() => error))),
-    ).rejects.toBe(error);
+    const result = firstValueFrom(
+      interceptor(request, () => throwError(() => error)),
+    );
 
-    expect(apiError.error()).toEqual({
-      status: 401,
-      message: error.message,
-      url: '/api/profile',
-    });
+    await expect(result).rejects.toEqual(
+      new ApiHttpError(401, error.message, '/api/profile'),
+    );
   });
 
   it('uses the request URL when the HTTP error has no URL', async () => {
-    const apiError = TestBed.inject(ApiError);
     const error = new HttpErrorResponse({
       status: 500,
       statusText: 'Server Error',
@@ -46,22 +42,21 @@ describe('errorInterceptor', () => {
 
     const request = new HttpRequest('GET', '/api/fallback');
 
-    await expect(
-      firstValueFrom(interceptor(request, () => throwError(() => error))),
-    ).rejects.toBe(error);
+    const result = firstValueFrom(
+      interceptor(request, () => throwError(() => error)),
+    );
 
-    expect(apiError.error()?.url).toBe('/api/fallback');
+    await expect(result).rejects.toEqual(
+      new ApiHttpError(500, error.message, '/api/fallback'),
+    );
   });
 
-  it('does not report non-HTTP errors', async () => {
-    const apiError = TestBed.inject(ApiError);
+  it('does not normalize non-HTTP errors', async () => {
     const error = new Error('Unexpected failure');
     const request = new HttpRequest('GET', '/api/profile');
 
     await expect(
       firstValueFrom(interceptor(request, () => throwError(() => error))),
     ).rejects.toBe(error);
-
-    expect(apiError.error()).toBeNull();
   });
 });
