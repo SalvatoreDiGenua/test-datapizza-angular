@@ -6,6 +6,7 @@ import { ChatComposer } from './components/chat-composer/chat-composer';
 import { ChatHeader } from './components/chat-header/chat-header';
 import { ChatMessageList } from './components/chat-message-list/chat-message-list';
 import { ChatSession } from '../../core/services/chat/chat-session';
+import { ChatMessageSender } from '../../core/services/chat/chat-message-sender';
 import { getApiErrorMessage } from '../../core/services/api-error/api-error-message';
 
 @Component({
@@ -19,7 +20,7 @@ import { getApiErrorMessage } from '../../core/services/api-error/api-error-mess
     ChatMessageList,
     ChatComposer,
   ],
-  providers: [ChatSession],
+  providers: [ChatSession, ChatMessageSender],
 })
 export class Chat {
   readonly chat_id = input<string | undefined>();
