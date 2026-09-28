@@ -1,10 +1,11 @@
-import { Component, DestroyRef, inject, viewChild } from '@angular/core';
+import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   createRequestLockContext,
   RequestLockDirective,
@@ -13,6 +14,7 @@ import { AuthService } from '../../api';
 import { Auth } from '../../core/auth/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +24,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     RequestLockDirective,
   ],
 })
@@ -34,6 +37,8 @@ export class Login {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
+  readonly loading = signal(false);
+
   userIdControl = new FormControl('', {
     nonNullable: true,
     validators: [
@@ -44,12 +49,13 @@ export class Login {
   });
 
   login() {
-    if (this.userIdControl.invalid) {
+    if (this.userIdControl.invalid || this.loading()) {
       this.userIdControl.markAllAsTouched();
       return;
     }
 
     const userId = this.userIdControl.value;
+    this.loading.set(true);
 
     this.authService
       .loginApiAuthLoginPost({ user_id: userId }, 'body', false, {
@@ -57,7 +63,10 @@ export class Login {
           this.requestLock()?.requestId() as string,
         ),
       })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loading.set(false)),
+      )
       .subscribe({
         next: () => {
           this.auth.setUser({
