@@ -1,6 +1,35 @@
 <mat-toolbar>
-  <button matIconButton (click)="toggleShellDrawer()">
+  <button
+    matIconButton
+    type="button"
+    aria-label="Apri menu di navigazione"
+    (click)="toggleShellDrawer()"
+  >
     <mat-icon>menu</mat-icon>
   </button>
+
   <span>Datapizza test</span>
+
+  <span class="flex-1"></span>
+
+  <button
+    matIconButton
+    type="button"
+    [matMenuTriggerFor]="userMenu"
+    aria-label="Apri menu utente"
+  >
+    <app-avatar [username]="auth.user()?.id ?? ''" />
+  </button>
+
+  <mat-menu #userMenu="matMenu" xPosition="before">
+    <button mat-menu-item disabled>
+      <mat-icon>person</mat-icon>
+      <span>{{ auth.user()?.id }}</span>
+    </button>
+
+    <button mat-menu-item type="button" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
