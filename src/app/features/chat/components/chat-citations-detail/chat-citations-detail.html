@@ -88,14 +88,33 @@
           </p>
 
           <div class="citation-selector gap-2 flex overflow-x-auto">
-            @for (citation of file.citations; track $index) {
+            @for (page of citationPages(); track page.pageNumber) {
               <button
                 matRipple
                 type="button"
                 class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors cursor-pointer"
+                [class.border-primary!]="selectedCitationPageIndex() === $index"
+                [attr.aria-pressed]="selectedCitationPageIndex() === $index"
+                [attr.aria-label]="
+                  'Pagina ' +
+                  page.pageNumber +
+                  (page.citations.length > 1
+                    ? ', ' + page.citations.length + ' citazioni'
+                    : ', 1 citazione')
+                "
                 (click)="selectCitation($index)"
               >
-                Pagina {{ citation.page_number }}
+                <span class="gap-1.5 flex items-center">
+                  <span>Pagina {{ page.pageNumber }}</span>
+                  @if (page.citations.length > 1) {
+                    <span
+                      class="min-w-5 h-5 rounded-full bg-primary px-1.5 text-[10px] font-bold leading-5 text-on-primary"
+                      aria-hidden="true"
+                    >
+                      {{ page.citations.length }}
+                    </span>
+                  }
+                </span>
               </button>
             }
           </div>
