@@ -12,14 +12,10 @@
 
   <span class="flex-1"></span>
 
-  <button
-    matIconButton
-    type="button"
+  <app-avatar
+    [username]="auth.user()?.id ?? ''"
     [matMenuTriggerFor]="userMenu"
-    aria-label="Apri menu utente"
-  >
-    <app-avatar [username]="auth.user()?.id ?? ''" />
-  </button>
+  />
 
   <mat-menu #userMenu="matMenu" xPosition="before">
     <button mat-menu-item disabled>
