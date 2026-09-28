@@ -371,6 +371,77 @@ e genera il client TypeScript/Angular in:
 src/app/api
 ```
 
+## 🐳 Esecuzione con Docker
+
+Per rendere il frontend facilmente eseguibile su macchine diverse è disponibile un'immagine Docker **multi-stage**:
+
+1. una fase Node.js installa le dipendenze e compila l'app Angular;
+2. una fase Nginx serve gli asset statici risultanti;
+3. Nginx espone l'API del mock backend tramite reverse proxy su `/api`.
+
+Il container frontend non contiene il backend: il mock API rimane un servizio separato e deve essere raggiungibile sulla porta `8000` della macchina host.
+
+### Prerequisiti
+
+Sono necessari:
+
+- Docker;
+- Docker Compose, incluso nelle installazioni moderne di Docker Desktop;
+- il mock backend avviato localmente sulla porta `8000`.
+
+### Avvio con Docker Compose
+
+Dalla root del progetto:
+
+```bash
+docker compose up --build
+```
+
+L'applicazione sarà disponibile su:
+
+```text
+http://localhost:8080
+```
+
+Per arrestare e rimuovere il container:
+
+```bash
+docker compose down
+```
+
+### Avvio con Docker CLI
+
+È possibile costruire e avviare l'immagine senza Compose:
+
+```bash
+docker build -t datapizza-angular .
+docker run --rm -p 8080:80 --add-host host.docker.internal:host-gateway datapizza-angular
+```
+
+### Perché il proxy Nginx
+
+In ambiente Docker il browser non deve conoscere l'indirizzo interno del container o modificare manualmente la configurazione API.
+
+L'applicazione Angular viene compilata con:
+
+```text
+/api
+```
+
+come base URL del backend Docker. Nginx inoltra quindi le richieste `/api/*` al mock backend disponibile sulla macchina host alla porta `8000`.
+
+Questo mantiene frontend e API sullo stesso origin dal punto di vista del browser e semplifica anche la gestione della sessione tramite cookie.
+
+### Configurazione per sviluppo locale
+
+La configurazione Docker è separata da quella di sviluppo:
+
+- `npm start` continua a utilizzare `http://localhost:8000`;
+- `npm run build:docker` utilizza `/api`;
+- il container Nginx gestisce il proxy verso il backend.
+
+In questo modo il flusso di sviluppo Angular non viene alterato dalla presenza del container.
+
 ## ⚙️ Configurazione API
 
 L'URL del backend di sviluppo è configurato nell'environment Angular.
