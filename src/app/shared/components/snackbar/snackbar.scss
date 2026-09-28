@@ -8,7 +8,6 @@
 
   padding: 0.875rem 1rem;
 
-  border: 1px solid;
   border-radius: 0.75rem;
 
   background: var(--mat-sys-surface-container-high);
@@ -38,38 +37,41 @@
   &__message {
     margin-top: 0.125rem;
     line-height: 1.4;
-    opacity: 0.9;
   }
 
   &--success {
-    border-color: color-mix(in srgb, var(--mat-sys-primary) 45%, transparent);
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
 
     .snackbar__icon {
-      color: var(--mat-sys-primary);
+      color: inherit;
     }
   }
 
   &--error {
-    border-color: color-mix(in srgb, var(--mat-sys-error) 45%, transparent);
+    background: var(--mat-sys-error);
+    color: var(--mat-sys-on-error);
 
     .snackbar__icon {
-      color: var(--mat-sys-error);
+      color: inherit;
     }
   }
 
   &--warning {
-    border-color: color-mix(in srgb, #f59e0b 45%, transparent);
+    background: #f59e0b;
+    color: #1f2937;
 
     .snackbar__icon {
-      color: #f59e0b;
+      color: inherit;
     }
   }
 
   &--info {
-    border-color: color-mix(in srgb, #3b82f6 45%, transparent);
+    background: #3b82f6;
+    color: #ffffff;
 
     .snackbar__icon {
-      color: #3b82f6;
+      color: inherit;
     }
   }
 }
