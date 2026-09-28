@@ -1,12 +1,10 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Service } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 
 import { ChatService } from '../../api';
-import { ChatHistoryItem } from '../../core/models/chat';
+import { ChatApiConversation, ChatHistoryItem } from '../../core/models/chat';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ChatHistoryStore {
   private readonly chatService = inject(ChatService);
 
@@ -18,14 +16,14 @@ export class ChatHistoryStore {
     const value = this.resource.value();
 
     return value
-      .map((v: any) => ({
+      .map((v: ChatApiConversation) => ({
         id: v.id,
         title: v.query.trim() || 'Nuova conversazione',
         preview: v.response.trim(),
         createdAt: v.created_at,
       }))
       .sort(
-        (prev: any, next: any) =>
+        (prev: ChatHistoryItem, next: ChatHistoryItem) =>
           new Date(next.createdAt).getTime() -
           new Date(prev.createdAt).getTime(),
       );

@@ -1,10 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { MatDrawerMode } from '@angular/material/sidenav';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ShellService {
   public readonly isDrawerOpen = signal(true);
   public readonly drawerMode = signal<MatDrawerMode>('side');
