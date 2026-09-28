@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, computed, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,14 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
-  createRequestLockContext,
   RequestLockDirective,
+  RequestLockService,
+  createRequestLockContext,
 } from 'ngx-request-lock';
 import { AuthService } from '../../api';
 import { Auth } from '../../core/auth/auth';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,8 @@ import { finalize } from 'rxjs';
   ],
 })
 export class Login {
-  private readonly requestLock = viewChild(RequestLockDirective);
+  private readonly requestLock = viewChild.required(RequestLockDirective);
+  private readonly requestLockService = inject(RequestLockService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
@@ -37,7 +38,9 @@ export class Login {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly loading = signal(false);
+  readonly loading = computed(() =>
+    this.requestLockService.isPending(this.requestLock().requestId())(),
+  );
 
   userIdControl = new FormControl('', {
     nonNullable: true,
@@ -48,25 +51,19 @@ export class Login {
     ],
   });
 
-  login() {
+  login(): void {
     if (this.userIdControl.invalid || this.loading()) {
       this.userIdControl.markAllAsTouched();
       return;
     }
 
     const userId = this.userIdControl.value;
-    this.loading.set(true);
 
     this.authService
       .loginApiAuthLoginPost({ user_id: userId }, 'body', false, {
-        context: createRequestLockContext(
-          this.requestLock()?.requestId() as string,
-        ),
+        context: createRequestLockContext(this.requestLock().requestId()),
       })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.loading.set(false)),
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.auth.setUser({
