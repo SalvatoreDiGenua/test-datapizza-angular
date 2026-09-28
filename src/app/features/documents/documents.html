@@ -36,14 +36,22 @@
   </header>
 
   @if (isUploading()) {
-    <mat-progress-bar mode="indeterminate" class="documents__upload-progress" />
+    <mat-progress-bar
+      mode="determinate"
+      [value]="uploadProgress()"
+      class="documents__upload-progress"
+    />
 
     <div class="documents__upload-status" role="status" aria-live="polite">
       <mat-icon>cloud_upload</mat-icon>
 
       <div>
         <strong>Caricamento documenti</strong>
-        <span>Il server sta elaborando i file selezionati...</span>
+        @if (uploadProgress() < 100) {
+          <span>Upload dei file in corso... {{ uploadProgress() }}%</span>
+        } @else {
+          <span>Il server sta elaborando i file selezionati...</span>
+        }
       </div>
     </div>
   }
