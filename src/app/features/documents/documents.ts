@@ -26,6 +26,7 @@ import {
   RequestLockService,
   createRequestLockContext,
 } from 'ngx-request-lock';
+import { Auth } from '../../core/auth/auth';
 
 @Component({
   selector: 'app-documents',
@@ -46,6 +47,7 @@ import {
 })
 export class Documents implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(Auth);
   private readonly documentsService = inject(DocumentsService);
   private readonly snackbar = inject(SnackbarService);
   private readonly requestLockService = inject(RequestLockService);
@@ -76,16 +78,9 @@ export class Documents implements OnInit {
 
   getFiles(requestId = this.loadRequestId): void {
     this.documentsService
-      .listDocumentsApiDocumentsGet(
-        20,
-        0,
-        undefined,
-        undefined,
-        undefined,
-        {
-          context: createRequestLockContext(requestId),
-        },
-      )
+      .listDocumentsApiDocumentsGet(20, 0, undefined, undefined, undefined, {
+        context: createRequestLockContext(requestId),
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -117,7 +112,7 @@ export class Documents implements OnInit {
     this.documentsService
       .uploadDocumentsApiDocumentsPost(
         pdfFiles,
-        undefined,
+        this.auth.user()?.id,
         undefined,
         undefined,
         {
