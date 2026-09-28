@@ -52,10 +52,10 @@ export class App {
   constructor() {
     effect(() => {
       const error = this.apiErrorService.error();
-      if (!error?.message) {
+      if (!error?.userMessage) {
         return;
       }
-      this.snackBarService.error(error.message);
+      this.snackBarService.error(error.userMessage);
     });
   }
 }
