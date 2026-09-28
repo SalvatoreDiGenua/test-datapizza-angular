@@ -53,17 +53,13 @@ export class Documents implements OnInit {
   private readonly loadRequestId = 'documents-load';
   readonly uploadRequestId = 'documents-upload';
 
-  private readonly loadPending = computed(() =>
+  readonly isLoading = computed(() =>
     this.requestLockService.isPending(this.loadRequestId)(),
   );
 
-  readonly isLoading = this.loadPending;
-
-  private readonly uploadPending = computed(() =>
+  readonly isUploading = computed(() =>
     this.requestLockService.isPending(this.uploadRequestId)(),
   );
-
-  readonly isUploading = this.uploadPending;
 
   readonly displayedColumns = [
     'filename',
@@ -80,9 +76,16 @@ export class Documents implements OnInit {
 
   getFiles(requestId = this.loadRequestId): void {
     this.documentsService
-      .listDocumentsApiDocumentsGet(20, 0, {
-        context: createRequestLockContext(requestId),
-      })
+      .listDocumentsApiDocumentsGet(
+        20,
+        0,
+        undefined,
+        undefined,
+        undefined,
+        {
+          context: createRequestLockContext(requestId),
+        },
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -112,9 +115,15 @@ export class Documents implements OnInit {
     }
 
     this.documentsService
-      .uploadDocumentsApiDocumentsPost(pdfFiles, {
-        context: createRequestLockContext(this.uploadRequestId),
-      })
+      .uploadDocumentsApiDocumentsPost(
+        pdfFiles,
+        undefined,
+        undefined,
+        undefined,
+        {
+          context: createRequestLockContext(this.uploadRequestId),
+        },
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
