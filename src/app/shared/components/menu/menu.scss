@@ -12,17 +12,6 @@
   color: var(--mat-sys-on-surface);
 }
 
-.menu__label {
-  padding: 0 0.625rem;
-
-  color: var(--mat-sys-on-surface-variant);
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1rem;
-  text-transform: uppercase;
-}
-
 .menu__items {
   display: flex;
   flex-direction: column;
