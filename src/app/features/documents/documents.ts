@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -40,6 +41,7 @@ import { Auth } from '../../core/auth/auth';
     MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatPaginatorModule,
     DatePipe,
     GetFileExtension,
     RequestLockDirective,
@@ -66,6 +68,16 @@ export class Documents implements OnInit {
 
   readonly uploadProgress = signal(0);
 
+  readonly pageSize = signal(20);
+  readonly pageIndex = signal(0);
+  readonly hasNextPage = signal(false);
+  readonly paginationLength = computed(() => {
+    const visibleItems =
+      this.pageIndex() * this.pageSize() + this.dataSource().length;
+
+    return visibleItems + (this.hasNextPage() ? 1 : 0);
+  });
+
   readonly displayedColumns = [
     'filename',
     'page_count',
@@ -79,11 +91,18 @@ export class Documents implements OnInit {
     this.getFiles();
   }
 
-  getFiles(requestId = this.loadRequestId): void {
+  getFiles(requestId = this.loadRequestId, pageIndex = this.pageIndex()): void {
+    const limit = this.pageSize() + 1;
+    const offset = pageIndex * this.pageSize();
+
+    if (requestId === this.loadRequestId) {
+      this.pageIndex.set(pageIndex);
+    }
+
     this.documentsService
       .listDocumentsApiDocumentsGet(
-        20,
-        0,
+        limit,
+        offset,
         this.auth.user()?.id,
         undefined,
         undefined,
@@ -93,8 +112,13 @@ export class Documents implements OnInit {
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => {
-          this.dataSource.set(data);
+        next: (data: Document[]) => {
+          const hasNext = data.length > this.pageSize();
+
+          this.hasNextPage.set(hasNext);
+          this.dataSource.set(
+            hasNext ? data.slice(0, this.pageSize()) : data,
+          );
         },
         error: () => {
           this.uploadProgress.set(0);
@@ -154,7 +178,8 @@ export class Documents implements OnInit {
             'Upload completato',
           );
 
-          this.getFiles(this.uploadRequestId);
+          this.pageIndex.set(0);
+          this.getFiles(this.uploadRequestId, 0);
         },
         error: () => {
           this.snackbar.error(
@@ -163,6 +188,17 @@ export class Documents implements OnInit {
           );
         },
       });
+  }
+
+  onPageChange(event: PageEvent): void {
+    if (event.pageSize !== this.pageSize()) {
+      this.pageSize.set(event.pageSize);
+      this.pageIndex.set(0);
+      this.getFiles();
+      return;
+    }
+
+    this.getFiles(this.loadRequestId, event.pageIndex);
   }
 
   onFileSelected(event: Event): void {
