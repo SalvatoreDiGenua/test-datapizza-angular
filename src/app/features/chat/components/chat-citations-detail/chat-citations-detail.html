@@ -90,8 +90,9 @@
           <div class="citation-selector gap-2 flex overflow-x-auto">
             @for (citation of file.citations; track $index) {
               <button
+                matRipple
                 type="button"
-                class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors"
+                class="border-slate-200 px-3 py-1.5 text-xs font-medium dark:border-slate-700 shrink-0 rounded-full border transition-colors cursor-pointer"
                 (click)="selectCitation($index)"
               >
                 Pagina {{ citation.page_number }}
