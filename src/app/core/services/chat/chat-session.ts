@@ -9,6 +9,7 @@ import {
 } from '../../models/chat';
 import { ChatStreamService } from './chat-stream';
 import { ChatHistoryStore } from '../../../shared/services/chat-history-store';
+import { getApiErrorMessage } from '../api-error/api-error-message';
 
 @Service()
 export class ChatSession {
@@ -137,7 +138,7 @@ export class ChatSession {
 
       this.updateMessage(assistantMessage.id, {
         content:
-          assistantText || 'Si è verificato un errore durante la risposta.',
+          assistantText || getApiErrorMessage(error),
         status: 'error',
         citations,
       });
