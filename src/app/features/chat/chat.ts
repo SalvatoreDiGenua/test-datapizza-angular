@@ -6,6 +6,7 @@ import { ChatComposer } from './components/chat-composer/chat-composer';
 import { ChatHeader } from './components/chat-header/chat-header';
 import { ChatMessageList } from './components/chat-message-list/chat-message-list';
 import { ChatSession } from '../../core/services/chat/chat-session';
+import { getApiErrorMessage } from '../../core/services/api-error/api-error-message';
 
 @Component({
   selector: 'app-chat',
@@ -36,6 +37,12 @@ export class Chat {
   readonly canCompose = computed(
     () => !this.loading() && !this.loadError(),
   );
+
+  readonly loadErrorMessage = computed(() => {
+    const error = this.loadError();
+
+    return error ? getApiErrorMessage(error) : null;
+  });
 
   sendMessage(content: string): void {
     const history = this.messages().map(
