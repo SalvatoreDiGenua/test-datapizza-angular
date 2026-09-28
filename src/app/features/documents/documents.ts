@@ -18,7 +18,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { DocumentsService } from '../../api';
-import { Document } from '../../core/models/document';
 import { SnackbarService } from '../../shared/services/snackbar';
 import { DatePipe } from '@angular/common';
 import { GetFileExtension } from '../../shared/pipes/get-file-extension';
@@ -64,7 +63,7 @@ export class Documents {
 
   readonly uploadProgress = signal(0);
 
-  readonly pageSize = signal(20);
+  readonly pageSize = signal(5);
   readonly pageIndex = signal(0);
   readonly documentsResource = rxResource({
     params: () => ({
@@ -77,7 +76,7 @@ export class Documents {
           params.limit,
           params.offset,
           this.auth.user()?.id,
-          undefined,
+          'body',
           undefined,
           {
             context: createRequestLockContext(this.loadRequestId),
@@ -188,8 +187,6 @@ export class Documents {
     }
 
     this.uploadFiles(input.files);
-
-    // Permette di riselezionare lo stesso file.
     input.value = '';
   }
 }
