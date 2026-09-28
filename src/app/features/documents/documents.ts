@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   OnInit,
   inject,
@@ -20,6 +21,11 @@ import { Document } from '../../core/models/document';
 import { SnackbarService } from '../../shared/services/snackbar';
 import { DatePipe } from '@angular/common';
 import { GetFileExtension } from '../../shared/pipes/get-file-extension';
+import {
+  RequestLockDirective,
+  RequestLockService,
+  createRequestLockContext,
+} from 'ngx-request-lock';
 
 @Component({
   selector: 'app-documents',
@@ -33,7 +39,8 @@ import { GetFileExtension } from '../../shared/pipes/get-file-extension';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     DatePipe,
-    GetFileExtension
+    GetFileExtension,
+    RequestLockDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,6 +48,22 @@ export class Documents implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly documentsService = inject(DocumentsService);
   private readonly snackbar = inject(SnackbarService);
+  private readonly requestLockService = inject(RequestLockService);
+
+  private readonly loadRequestId = 'documents-load';
+  readonly uploadRequestId = 'documents-upload';
+
+  private readonly loadPending = computed(() =>
+    this.requestLockService.isPending(this.loadRequestId)(),
+  );
+
+  readonly isLoading = this.loadPending;
+
+  private readonly uploadPending = computed(() =>
+    this.requestLockService.isPending(this.uploadRequestId)(),
+  );
+
+  readonly isUploading = this.uploadPending;
 
   readonly displayedColumns = [
     'filename',
@@ -51,27 +74,21 @@ export class Documents implements OnInit {
 
   readonly dataSource = signal<Document[]>([]);
 
-  readonly isLoading = signal(false);
-  readonly isUploading = signal(false);
-
   ngOnInit(): void {
     this.getFiles();
   }
 
-  getFiles(): void {
-    this.isLoading.set(true);
-
+  getFiles(requestId = this.loadRequestId): void {
     this.documentsService
-      .listDocumentsApiDocumentsGet(20, 0)
+      .listDocumentsApiDocumentsGet(20, 0, {
+        context: createRequestLockContext(requestId),
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           this.dataSource.set(data);
-          this.isLoading.set(false);
         },
         error: () => {
-          this.isLoading.set(false);
-
           this.snackbar.error(
             'Non è stato possibile recuperare i documenti.',
             'Caricamento fallito',
@@ -94,15 +111,13 @@ export class Documents implements OnInit {
       return;
     }
 
-    this.isUploading.set(true);
-
     this.documentsService
-      .uploadDocumentsApiDocumentsPost(pdfFiles)
+      .uploadDocumentsApiDocumentsPost(pdfFiles, {
+        context: createRequestLockContext(this.uploadRequestId),
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isUploading.set(false);
-
           this.snackbar.success(
             pdfFiles.length === 1
               ? 'Il documento è stato caricato correttamente.'
@@ -110,11 +125,9 @@ export class Documents implements OnInit {
             'Upload completato',
           );
 
-          this.getFiles();
+          this.getFiles(this.uploadRequestId);
         },
         error: () => {
-          this.isUploading.set(false);
-
           this.snackbar.error(
             'Uno o più documenti non sono stati caricati.',
             'Upload fallito',
