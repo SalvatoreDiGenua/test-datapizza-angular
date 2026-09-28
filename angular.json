@@ -8,7 +8,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "angular-boilerplate": {
+    "test-datapizza-angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -87,10 +87,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "angular-boilerplate:build:production"
+              "buildTarget": "test-datapizza-angular:build:production"
             },
             "development": {
-              "buildTarget": "angular-boilerplate:build:development"
+              "buildTarget": "test-datapizza-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
