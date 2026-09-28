@@ -19,6 +19,7 @@ import { DocumentsService } from '../../api';
 import { Document } from '../../core/models/document';
 import { SnackbarService } from '../../shared/services/snackbar';
 import { DatePipe } from '@angular/common';
+import { GetFileExtension } from '../../shared/pipes/get-file-extension';
 
 @Component({
   selector: 'app-documents',
@@ -32,6 +33,7 @@ import { DatePipe } from '@angular/common';
     MatProgressBarModule,
     MatProgressSpinnerModule,
     DatePipe,
+    GetFileExtension
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
