@@ -9,37 +9,6 @@
 
   min-height: 4rem;
   padding: 0 1rem;
-
-  border-bottom: 1px solid var(--mat-sys-outline-variant);
-
-  background: color-mix(
-    in srgb,
-    var(--mat-sys-surface-container) 94%,
-    var(--mat-sys-primary) 6%
-  );
-  color: var(--mat-sys-on-surface);
-
-  box-shadow: 0 1px 0 color-mix(
-    in srgb,
-    var(--mat-sys-primary) 4%,
-    transparent
-  );
-}
-
-.toolbar__menu-button {
-  flex: 0 0 auto;
-
-  color: var(--mat-sys-on-surface-variant);
-
-  &:hover {
-    background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
-    color: var(--mat-sys-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--mat-sys-primary);
-    outline-offset: 2px;
-  }
 }
 
 .toolbar__brand {
