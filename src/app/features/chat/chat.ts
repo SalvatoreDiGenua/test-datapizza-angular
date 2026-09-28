@@ -35,9 +35,7 @@ export class Chat {
   readonly loadError = this.chatResource.error;
   readonly sending = this.session.sending;
 
-  readonly canCompose = computed(
-    () => !this.loading() && !this.loadError(),
-  );
+  readonly canCompose = computed(() => !this.loading() && !this.loadError());
 
   readonly loadErrorMessage = computed(() => {
     const error = this.loadError();

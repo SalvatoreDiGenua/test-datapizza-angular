@@ -8,12 +8,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-chat-composer',
   templateUrl: './chat-composer.html',
   styleUrl: './chat-composer.scss',
-  imports: [
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-  ],
+  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
 })
 export class ChatComposer {
   readonly disabled = input(false);
@@ -25,9 +20,7 @@ export class ChatComposer {
 
   readonly canSend = computed(
     () =>
-      this.canCompose() &&
-      !this.disabled() &&
-      this.draft().trim().length > 0,
+      this.canCompose() && !this.disabled() && this.draft().trim().length > 0,
   );
 
   updateDraft(event: Event): void {

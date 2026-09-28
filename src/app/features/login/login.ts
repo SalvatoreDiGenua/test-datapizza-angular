@@ -1,4 +1,10 @@
-import { Component, DestroyRef, computed, inject, viewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';

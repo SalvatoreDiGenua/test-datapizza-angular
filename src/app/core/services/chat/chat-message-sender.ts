@@ -121,10 +121,7 @@ export class ChatMessageSender {
     }
   }
 
-  private updateMessage(
-    messageId: string,
-    patch: Partial<ChatMessage>,
-  ): void {
+  private updateMessage(messageId: string, patch: Partial<ChatMessage>): void {
     this.pendingMessages.update((messages) =>
       messages.map((message) =>
         message.id === messageId ? { ...message, ...patch } : message,

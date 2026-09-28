@@ -38,8 +38,8 @@ import { MatRipple } from '@angular/material/core';
     MatProgressSpinnerModule,
     MatSelectModule,
     PdfViewer,
-    MatRipple
-],
+    MatRipple,
+  ],
 })
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
@@ -106,32 +106,34 @@ export class ChatCitationsDetail {
   readonly citationHighlights = computed<PdfViewerHighlight[]>(() => {
     const citations = this.selectedCitationPage()?.citations ?? [];
 
-    return citations.flatMap((citation) => citation.bounding_regions).flatMap((region) =>
-      region.rects_in.flatMap((rect) => {
-        if (
-          rect.length !== 4 ||
-          rect.some((value) => !Number.isFinite(value))
-        ) {
-          return [];
-        }
+    return citations
+      .flatMap((citation) => citation.bounding_regions)
+      .flatMap((region) =>
+        region.rects_in.flatMap((rect) => {
+          if (
+            rect.length !== 4 ||
+            rect.some((value) => !Number.isFinite(value))
+          ) {
+            return [];
+          }
 
-        const [x, y, width, height] = rect;
+          const [x, y, width, height] = rect;
 
-        return [
-          {
-            page: region.page_number,
-            x,
-            y,
-            width,
-            height,
-            unit: 'inches',
-            color: [255, 220, 0] as [number, number, number],
-            opacity: 0.45,
-            thickness: 10,
-          },
-        ];
-      }),
-    );
+          return [
+            {
+              page: region.page_number,
+              x,
+              y,
+              width,
+              height,
+              unit: 'inches',
+              color: [255, 220, 0] as [number, number, number],
+              opacity: 0.45,
+              thickness: 10,
+            },
+          ];
+        }),
+      );
   });
 
   private readonly cachedFiles = new Map<string, Blob>();

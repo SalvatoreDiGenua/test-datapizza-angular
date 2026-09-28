@@ -25,9 +25,7 @@ export class ChatSession {
     });
 
     const messages = computed(() => {
-      const conversation = resource.value() as
-        | ChatApiConversation
-        | undefined;
+      const conversation = resource.value() as ChatApiConversation | undefined;
 
       const serverMessages = conversation
         ? conversationToMessages(conversation)
