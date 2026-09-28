@@ -87,7 +87,7 @@
             {{ file.filename }}
           </p>
 
-          <div class="citation-selector gap-2 flex overflow-x-auto">
+          <div class="citation-selector w-full gap-2 flex overflow-x-auto">
             @for (page of citationPages(); track page.pageNumber) {
               @let citationsCount = page.citations.length;
               <button
