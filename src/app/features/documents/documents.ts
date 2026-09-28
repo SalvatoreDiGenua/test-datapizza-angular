@@ -81,9 +81,16 @@ export class Documents implements OnInit {
 
   getFiles(requestId = this.loadRequestId): void {
     this.documentsService
-      .listDocumentsApiDocumentsGet(20, 0, undefined, undefined, undefined, {
-        context: createRequestLockContext(requestId),
-      })
+      .listDocumentsApiDocumentsGet(
+        20,
+        0,
+        this.auth.user()?.id,
+        undefined,
+        undefined,
+        {
+          context: createRequestLockContext(requestId),
+        },
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
