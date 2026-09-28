@@ -13,8 +13,7 @@ import {
 } from 'ngx-request-lock';
 import { AuthService } from '../../api';
 import { Auth } from '../../core/auth/auth';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpErrorResponse } from '@angular/common/http';
+import { getApiErrorMessage } from '../../core/services/api-error/api-error-message';
 
 @Component({
   selector: 'app-login',
@@ -36,7 +35,7 @@ export class Login {
   private readonly authService = inject(AuthService);
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly snackBar = inject(SnackbarService);
 
   readonly loading = computed(() =>
     this.requestLockService.isPending(this.requestLock().requestId())(),
@@ -72,12 +71,10 @@ export class Login {
           });
 
           const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-          this.router.navigateByUrl(returnUrl || '/shell/chat');
+          void this.router.navigateByUrl(returnUrl || '/shell/chat');
         },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore durante il login:', err);
-          const errorMessage = err.error.detail[0].msg;
-          this.snackBar.open(errorMessage);
+        error: (error: unknown) => {
+          this.snackBar.error(getApiErrorMessage(error), 'Accesso fallito');
         },
       });
   }
