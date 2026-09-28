@@ -23,6 +23,7 @@ import { Language } from './core/i18n/language';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
 import { provideApi } from './api';
 import { environment } from '../environments/environment.development';
+import { requestLockInterceptor } from 'ngx-request-lock';
 
 class NoopStorage implements Storage {
   readonly length = 0;
@@ -56,7 +57,13 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'top',
       }),
     ),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(
+      withInterceptors([
+        authInterceptor,
+        requestLockInterceptor,
+        errorInterceptor,
+      ]),
+    ),
     provideTransloco({
       config: {
         availableLangs: ['it', 'en'],
