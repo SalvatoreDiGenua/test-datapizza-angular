@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,7 +23,6 @@ import {
 } from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 import { Auth } from '../../../../core/auth/auth';
-import { MatRipple } from '@angular/material/core';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -31,12 +31,12 @@ import { MatRipple } from '@angular/material/core';
   imports: [
     GetFileExtension,
     MatButtonModule,
+    MatBadgeModule,
     MatIconModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     PdfViewer,
-    MatRipple,
   ],
 })
 export class ChatCitationsDetail {
