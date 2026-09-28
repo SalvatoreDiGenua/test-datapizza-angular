@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpEventType } from '@angular/common/http';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -63,6 +64,8 @@ export class Documents implements OnInit {
     this.requestLockService.isPending(this.uploadRequestId)(),
   );
 
+  readonly uploadProgress = signal(0);
+
   readonly displayedColumns = [
     'filename',
     'page_count',
@@ -87,6 +90,7 @@ export class Documents implements OnInit {
           this.dataSource.set(data);
         },
         error: () => {
+          this.uploadProgress.set(0);
           this.snackbar.error(
             'Non è stato possibile recuperare i documenti.',
             'Caricamento fallito',
@@ -109,19 +113,33 @@ export class Documents implements OnInit {
       return;
     }
 
+    this.uploadProgress.set(0);
+
     this.documentsService
       .uploadDocumentsApiDocumentsPost(
         pdfFiles,
         this.auth.user()?.id,
-        undefined,
-        undefined,
+        'events',
+        true,
         {
           context: createRequestLockContext(this.uploadRequestId),
         },
       )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            this.uploadProgress.set(
+              Math.round((event.loaded / event.total) * 100),
+            );
+            return;
+          }
+
+          if (event.type !== HttpEventType.Response) {
+            return;
+          }
+
+          this.uploadProgress.set(100);
           this.snackbar.success(
             pdfFiles.length === 1
               ? 'Il documento è stato caricato correttamente.'
