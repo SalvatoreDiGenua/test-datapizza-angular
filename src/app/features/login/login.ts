@@ -23,6 +23,7 @@ import { Auth } from '../../core/auth/auth';
 @Component({
   selector: 'app-login',
   templateUrl: './login.html',
+  styleUrl: './login.scss',
   imports: [
     ReactiveFormsModule,
     MatButtonModule,
