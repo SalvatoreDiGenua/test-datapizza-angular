@@ -6,7 +6,7 @@ import {
   getApiErrorMessage,
   getTechnicalErrorMessage,
 } from '../../../services/api-error/api-error-message';
-import { SnackbarService } from '../../../shared/services/snackbar';
+import { SnackbarService } from '../../../../shared/services/snackbar';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackbar = inject(SnackbarService);

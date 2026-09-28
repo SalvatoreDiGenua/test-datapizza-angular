@@ -69,17 +69,16 @@ export class Documents {
       offset: this.pageIndex() * this.pageSize(),
     }),
     stream: ({ params }) =>
-      this.documentsService
-        .listDocumentsApiDocumentsGet(
-          params.limit,
-          params.offset,
-          this.auth.user()?.id,
-          'body',
-          undefined,
-          {
-            context: createRequestLockContext(this.loadRequestId),
-          },
-        );
+      this.documentsService.listDocumentsApiDocumentsGet(
+        params.limit,
+        params.offset,
+        this.auth.user()?.id,
+        'body',
+        undefined,
+        {
+          context: createRequestLockContext(this.loadRequestId),
+        },
+      ),
   });
 
   readonly dataSource = computed(
