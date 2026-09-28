@@ -24,11 +24,11 @@ const NETWORK_ERROR_MESSAGE =
 export function getApiErrorMessage(error: unknown): string {
   const status = getApiErrorStatus(error);
 
-  if (status === 0) {
+  if (status === 0 || !status) {
     return NETWORK_ERROR_MESSAGE;
   }
 
-  return HTTP_ERROR_MESSAGES[status] ?? DEFAULT_HTTP_ERROR_MESSAGE;
+  return HTTP_ERROR_MESSAGES[status as number] ?? DEFAULT_HTTP_ERROR_MESSAGE;
 }
 
 export function getApiErrorStatus(error: unknown): number | null {
