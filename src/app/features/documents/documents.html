@@ -121,6 +121,17 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
+
+      <mat-paginator
+        [length]="paginationLength()"
+        [pageIndex]="pageIndex()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[10, 20, 50]"
+        [disabled]="isLoading()"
+        aria-label="Paginazione documenti"
+        showFirstLastButtons
+        (page)="onPageChange($event)"
+      />
     } @else {
       <div class="documents__empty">
         <div class="documents__empty-icon">
