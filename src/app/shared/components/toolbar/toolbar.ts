@@ -12,6 +12,7 @@ import { Avatar } from '../avatar/avatar';
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.html',
+  styleUrl: './toolbar.scss',
   imports: [
     MatToolbarModule,
     MatButtonModule,
