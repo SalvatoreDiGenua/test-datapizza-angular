@@ -7,8 +7,6 @@ import {
 } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { HttpEventType } from '@angular/common/http';
-import { tap } from 'rxjs';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -81,16 +79,7 @@ export class Documents {
           {
             context: createRequestLockContext(this.loadRequestId),
           },
-        )
-        .pipe(
-          tap({
-            error: () =>
-              this.snackbar.error(
-                'Non è stato possibile recuperare i documenti.',
-                'Caricamento fallito',
-              ),
-          }),
-        ),
+        );
   });
 
   readonly dataSource = computed(
@@ -164,12 +153,6 @@ export class Documents {
 
           this.pageIndex.set(0);
           this.documentsResource.reload();
-        },
-        error: () => {
-          this.snackbar.error(
-            'Uno o più documenti non sono stati caricati.',
-            'Upload fallito',
-          );
         },
       });
   }
