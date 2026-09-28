@@ -23,6 +23,7 @@ import {
 } from '../../../../shared/components/pdf-viewer/pdf-viewer';
 import { GetFileExtension } from '../../../../shared/pipes/get-file-extension';
 import { Auth } from '../../../../core/auth/auth';
+import { MatRipple } from '@angular/material/core';
 
 @Component({
   selector: 'app-chat-citations-detail',
@@ -37,7 +38,8 @@ import { Auth } from '../../../../core/auth/auth';
     MatProgressSpinnerModule,
     MatSelectModule,
     PdfViewer,
-  ],
+    MatRipple
+],
 })
 export class ChatCitationsDetail {
   private readonly destroyRef = inject(DestroyRef);
