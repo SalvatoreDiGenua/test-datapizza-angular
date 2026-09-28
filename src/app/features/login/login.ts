@@ -39,7 +39,7 @@ export class Login {
     this.requestLockService.isPending(this.requestLock().requestId())(),
   );
 
-  userIdControl = new FormControl('', {
+  userIdControl = new FormControl('defaultUser', {
     nonNullable: true,
     validators: [
       Validators.required,
