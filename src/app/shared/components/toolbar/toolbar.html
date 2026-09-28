@@ -1,21 +1,27 @@
-<mat-toolbar>
+<mat-toolbar class="toolbar">
   <button
     matIconButton
     type="button"
-    aria-label="Apri menu di navigazione"
+    class="toolbar__menu-button"
+    aria-label="Apri o chiudi il menu di navigazione"
     (click)="toggleShellDrawer()"
   >
     <mat-icon>menu</mat-icon>
   </button>
 
-  <span>Datapizza test</span>
+  <div class="toolbar__brand">
+    <span class="toolbar__title">Datapizza test</span>
+    <span class="toolbar__context">Workspace</span>
+  </div>
 
-  <span class="flex-1"></span>
+  <span class="toolbar__spacer"></span>
 
-  <app-avatar
-    [username]="auth.user()?.id ?? ''"
-    [matMenuTriggerFor]="userMenu"
-  />
+  <div class="toolbar__user">
+    <app-avatar
+      [username]="auth.user()?.id ?? ''"
+      [matMenuTriggerFor]="userMenu"
+    />
+  </div>
 
   <mat-menu #userMenu="matMenu" xPosition="before">
     <button mat-menu-item disabled>
