@@ -8,7 +8,7 @@
       class="mt-1 h-9 w-9 rounded-xl flex shrink-0 items-center justify-center bg-primary/10 text-primary"
       aria-hidden="true"
     >
-      <mat-icon fontIcon="auto_awesome"></mat-icon>
+      <mat-icon fontIcon="auto_awesome" />
     </div>
   }
 
@@ -34,7 +34,7 @@
           <markdown
             class="chat__markdown break-words"
             [data]="message().content"
-          ></markdown>
+          />
         } @else {
           <p class="m-0 break-words whitespace-pre-wrap">
             {{ message().content }}
@@ -61,7 +61,7 @@
             class="!h-4 !w-4 !text-[16px]"
             fontIcon="error_outline"
             aria-hidden="true"
-          ></mat-icon>
+          />
 
           <span>Errore nella risposta</span>
         </div>

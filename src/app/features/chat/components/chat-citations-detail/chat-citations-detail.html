@@ -7,7 +7,7 @@
     </p>
 
     <button mat-icon-button type="button" aria-label="Chiudi" (click)="close()">
-      <mat-icon fontIcon="close" aria-hidden="true"></mat-icon>
+      <mat-icon fontIcon="close" aria-hidden="true" />
     </button>
   </header>
 
@@ -115,14 +115,11 @@
                   : (selectedCitation()?.text_quote ?? null)
               "
               height="100%"
-            ></app-pdf-viewer>
+            />
           </div>
         } @else if (loadingFile()) {
           <div class="min-h-0 flex flex-1 items-center justify-center">
-            <mat-spinner
-              diameter="36"
-              aria-label="Caricamento documento"
-            ></mat-spinner>
+            <mat-spinner diameter="36" aria-label="Caricamento documento" />
           </div>
         } @else if (fileError()) {
           <div
@@ -140,7 +137,7 @@
               fontIcon="description"
               class="text-4xl text-slate-400"
               aria-hidden="true"
-            ></mat-icon>
+            />
             <p class="m-0 text-sm text-slate-500 dark:text-slate-400">
               L'anteprima è disponibile per i file PDF.
             </p>
